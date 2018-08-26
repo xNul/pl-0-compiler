@@ -1,0 +1,10 @@
+***Code Memory***
+  #  OP   R   L   M 
+  0 inc   0   0   3 
+  1 sio   0   0   3 
+
+***Execution***
+  #  OP   R   L   M  PC  BP  SP STK 
+  0 inc   0   0   3   1   1   3   0 |   0   0   0 
+  1 sio   0   0   3   2   1   3   0 |   0   0   0 
+HLT
