@@ -5,7 +5,7 @@ For your convenience, a repository was prepared containing C files, a Makefile a
 
 Below are the brief explanations about the files included in your repository. For detailed explanations, you should follow the comments inside those files.
 
-* [Makefile](Makefile): The makefile that helps to build and clean.
+* [Makefile](Makefile): The makefile that helps to build, test and clean.
 
 * [main.c](main.c): The C file that contains the main function and the code required to interpret command line arguments.
 
@@ -17,7 +17,7 @@ Below are the brief explanations about the files included in your repository. Fo
 
 Implementation of `simulateVM()` function is a must since it is going to be used by [main.c](main.c) to simulate the virtual machine. Helper functions are included as hints of a possible design. However, you are free to remove the helper functions and add new ones.
 
-* [test/](test/): The folder that contains the test cases and the scripts that you could use to try those test cases on your executable. Further information is included in the [README](test/README.md) file inside the [test/](test/) folder.
+* [test/](test/): The folder that contains the test cases and the scripts that you could use to try those test cases on your executable. Further information is included in the [Test & Grade](#test-&-grade) section below.
 
 # Command Line Arguments
 Usage: `./vm.out (ins_inp_file) (simul_outp_file) [vm_inp_file=stdin] [vm_outp_file=stdout]`
@@ -58,6 +58,29 @@ $ ./vm.out (ins_inp_file) (simul_outp_file) [vm_inp_file=stdin] [vm_outp_file=st
 
 For further information about command line arguments, read the [Command Line Arguments](#command-line-arguments) section.
 
+# Test & Grade
+Test cases with their ground truth outputs were prepared to help you test your solutions. Also, simple tester and grader scripts are included to allow you run your tests in automated manner.
+
+You could find the input files in [test/inputs/](test/inputs/) folder. The files that your solution should output are included in [test/groundtruth/](test/groundtruth/) folder.
+
+Targets for testing and grading does also exist in the [Makefile](Makefile). The target `run_vm` allows you to run your virtual machine with all the given test cases and creates the outputs of your virtual machine inside [test/outputs/](test/outputs/) folder. The target `grade` runs your virtual machine with all the given test cases, creates the outputs of your virtual machine and compares it with the ground truth outputs which are included in [test/groundtruth/](test/groundtruth/) folder.
+
+Basically, what you should do to get outputs from your virtual machine as a result of feeding the test cases is:
+```
+$ make run_vm
+```
+
+On top of that, if you are willing to compare your outputs with the ground truth outputs and see how many test cases you passed, you should do:
+```
+$ make grade
+```
+
+Although you do not need, you are encouraged to observe the bash scripts [test/run_vm.sh](test/run_vm.sh) [test/grader.sh](test/grader.sh), so that, you could come up with your own ideas to better test your work.
+
+To understand the assignment better and to further test your code, you are highly recommended to prepare new test cases and share them. You could start by writing simple pseduo-code and try to translate it to the language that your virtual machine would interpret. Then, you could proceed by writing functions, passing arguments to your functions, returning values from functions and so on.
+
+## Important Note on Grader
+Note that passing all the tests does not imply that you will take full points from the assignment. Different and more complex test cases will be included while grading your assignment. Therefore, try to come up with your own test methods to ensure the correctness of your work.
 
 # Hints
 * The functions `fprintf` and `fscanf` are your friends while performing input/output on FILE pointers. For further information about the functions:
@@ -66,6 +89,6 @@ $ man fprintf
 $ man fscanf
 ```
 
-# Important Note
+# Important Note on Submission
 
 Notice that the only file you should modify is [vm.c](vm.c) file since it is the only file that is going to be used while grading your assignment. Other files are going to be replaced by their originals. Therefore, it is important to ensure that the final version for your [vm.c](vm.c) file successfully builds and works as expected with the originals of the other files.
