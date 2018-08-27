@@ -39,12 +39,25 @@ $ ./vm.out test/inputs/inp_code_0.txt your_output_dir/simul_out_0.txt test/input
 After the execution of the above bash command, two files would be created in `your_output_dir` folder. These files should be the same as `test/groundtruth/simul_out_0.txt` and `test/groundtruth/vm_out_0.txt`.
 
 # A Note on Output Format
-The `diff` command with `--ignore-blank-lines` and `--ignore-all-space` options on will be used while comparing your outputs with the groundtruth. Therefore, you should not spend much time to match the number of spaces included in your output with the ones in the groundtruth. However, it is important to write the output in correct order by including required headers (e.g. `***Execution***`).
+The `diff` command with `--ignore-blank-lines` and `--ignore-all-space` options on will be used while comparing your outputs with the groundtruth. Therefore, you should not spend much time to match the number of spaces included in your output with the ones in the ground truth. However, it is important to write the output in correct order by including required headers (e.g. `***Execution***`).
+
+For example, the following texts has not difference according to `diff` command (with mentioned options on): 
+
+` * * * Execution * * * ` and `***Execution***` 
+
+`***Code Memory***` and `***CodeMemory***` 
+
+However, the following texts differs from each other according to `diff` command: 
+
+`###Execution###` and `***Execution***` 
+
+`# OP R L M` and `Num Operation R L M` 
 
 For further information about diff command:
 ```
 $ man diff
 ```
+
 # Build & Run
 The build is done with the help of the Makefile included in the repository. Following command is enough to build your solution and obtain the executable file `vm.out`:
 ```
