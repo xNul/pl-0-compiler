@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="test">
+      <UniqueIdentifier>{a6663e46-d037-403c-aa5b-5f897fbbab71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test\groundtruth">
+      <UniqueIdentifier>{31d315d0-ade5-493e-ba64-122f033208bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test\inputs">
+      <UniqueIdentifier>{bfcb4eae-84d9-49ef-8384-8ec9df514311}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -40,5 +49,139 @@
     <None Include="..\Makefile">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="..\test\grader.sh">
+      <Filter>test</Filter>
+    </None>
+    <None Include="..\test\run_vm.sh">
+      <Filter>test</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\test\tests.txt">
+      <Filter>test</Filter>
+    </Text>
+    <Text Include="..\test\tests_grader.txt">
+      <Filter>test</Filter>
+    </Text>
+    <Text Include="..\test\groundtruth\simul_out_2.txt">
+      <Filter>test\groundtruth</Filter>
+    </Text>
+    <Text Include="..\test\groundtruth\simul_out_3.txt">
+      <Filter>test\groundtruth</Filter>
+    </Text>
+    <Text Include="..\test\groundtruth\simul_out_4.txt">
+      <Filter>test\groundtruth</Filter>
+    </Text>
+    <Text Include="..\test\groundtruth\simul_out_5.txt">
+      <Filter>test\groundtruth</Filter>
+    </Text>
+    <Text Include="..\test\groundtruth\simul_out_6.txt">
+      <Filter>test\groundtruth</Filter>
+    </Text>
+    <Text Include="..\test\groundtruth\simul_out_7.txt">
+      <Filter>test\groundtruth</Filter>
+    </Text>
+    <Text Include="..\test\groundtruth\simul_out_8.txt">
+      <Filter>test\groundtruth</Filter>
+    </Text>
+    <Text Include="..\test\groundtruth\simul_out_9.txt">
+      <Filter>test\groundtruth</Filter>
+    </Text>
+    <Text Include="..\test\groundtruth\vm_out_0.txt">
+      <Filter>test\groundtruth</Filter>
+    </Text>
+    <Text Include="..\test\groundtruth\vm_out_1.txt">
+      <Filter>test\groundtruth</Filter>
+    </Text>
+    <Text Include="..\test\groundtruth\vm_out_2.txt">
+      <Filter>test\groundtruth</Filter>
+    </Text>
+    <Text Include="..\test\groundtruth\vm_out_3.txt">
+      <Filter>test\groundtruth</Filter>
+    </Text>
+    <Text Include="..\test\groundtruth\vm_out_4.txt">
+      <Filter>test\groundtruth</Filter>
+    </Text>
+    <Text Include="..\test\groundtruth\vm_out_5.txt">
+      <Filter>test\groundtruth</Filter>
+    </Text>
+    <Text Include="..\test\groundtruth\vm_out_6.txt">
+      <Filter>test\groundtruth</Filter>
+    </Text>
+    <Text Include="..\test\groundtruth\vm_out_7.txt">
+      <Filter>test\groundtruth</Filter>
+    </Text>
+    <Text Include="..\test\groundtruth\vm_out_8.txt">
+      <Filter>test\groundtruth</Filter>
+    </Text>
+    <Text Include="..\test\groundtruth\vm_out_9.txt">
+      <Filter>test\groundtruth</Filter>
+    </Text>
+    <Text Include="..\test\groundtruth\simul_out_0.txt">
+      <Filter>test\groundtruth</Filter>
+    </Text>
+    <Text Include="..\test\groundtruth\simul_out_1.txt">
+      <Filter>test\groundtruth</Filter>
+    </Text>
+    <Text Include="..\test\inputs\inp_code_1.txt">
+      <Filter>test\inputs</Filter>
+    </Text>
+    <Text Include="..\test\inputs\inp_code_2.txt">
+      <Filter>test\inputs</Filter>
+    </Text>
+    <Text Include="..\test\inputs\inp_code_3.txt">
+      <Filter>test\inputs</Filter>
+    </Text>
+    <Text Include="..\test\inputs\inp_code_4.txt">
+      <Filter>test\inputs</Filter>
+    </Text>
+    <Text Include="..\test\inputs\inp_code_5.txt">
+      <Filter>test\inputs</Filter>
+    </Text>
+    <Text Include="..\test\inputs\inp_code_6.txt">
+      <Filter>test\inputs</Filter>
+    </Text>
+    <Text Include="..\test\inputs\inp_code_7.txt">
+      <Filter>test\inputs</Filter>
+    </Text>
+    <Text Include="..\test\inputs\inp_code_8.txt">
+      <Filter>test\inputs</Filter>
+    </Text>
+    <Text Include="..\test\inputs\inp_code_9.txt">
+      <Filter>test\inputs</Filter>
+    </Text>
+    <Text Include="..\test\inputs\inp_vm_0.txt">
+      <Filter>test\inputs</Filter>
+    </Text>
+    <Text Include="..\test\inputs\inp_vm_1.txt">
+      <Filter>test\inputs</Filter>
+    </Text>
+    <Text Include="..\test\inputs\inp_vm_2.txt">
+      <Filter>test\inputs</Filter>
+    </Text>
+    <Text Include="..\test\inputs\inp_vm_3.txt">
+      <Filter>test\inputs</Filter>
+    </Text>
+    <Text Include="..\test\inputs\inp_vm_4.txt">
+      <Filter>test\inputs</Filter>
+    </Text>
+    <Text Include="..\test\inputs\inp_vm_5.txt">
+      <Filter>test\inputs</Filter>
+    </Text>
+    <Text Include="..\test\inputs\inp_vm_6.txt">
+      <Filter>test\inputs</Filter>
+    </Text>
+    <Text Include="..\test\inputs\inp_vm_7.txt">
+      <Filter>test\inputs</Filter>
+    </Text>
+    <Text Include="..\test\inputs\inp_vm_8.txt">
+      <Filter>test\inputs</Filter>
+    </Text>
+    <Text Include="..\test\inputs\inp_vm_9.txt">
+      <Filter>test\inputs</Filter>
+    </Text>
+    <Text Include="..\test\inputs\inp_code_0.txt">
+      <Filter>test\inputs</Filter>
+    </Text>
   </ItemGroup>
 </Project>
