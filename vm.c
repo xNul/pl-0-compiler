@@ -85,7 +85,15 @@ void dumpInstructions(FILE* out, Instruction* ins, int numOfIns)
  * */
 int getBasePointer(int *stack, int currentBP, int L)
 {
-    // TODO
+    // Based off of syllabus example. (Appendix D)
+	int b1;
+	// Iterate L levels down until we retrieve our desired b1 (base)
+	while (L > 0)
+	{
+		b1 = stack[b1 + 1];
+		L--;
+	}
+	return b1;
 }
 
 // Function that dumps the whole stack into output file
