@@ -160,11 +160,13 @@ void simulateVM(
     // Initialize the virtual machine
     // TODO
 
+	int vmState = 0;
     // Fetch&Execute the instructions on the virtual machine until halting
     while( /* TODO: Until halt is signalled.. */ )
     {
         // Fetch&Execute
-        // TODO
+        // TODO Execute instruction. The result will be HALT (1) or CONT (0).
+		// We use this result to determine whether we continue execution or not.
     }
 
     // Above loop ends when machine halts. Therefore, dump halt message.
