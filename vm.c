@@ -62,7 +62,19 @@ void initVM(VirtualMachine* vm)
  * */
 int readInstructions(FILE* in, Instruction* ins)
 {
-    // TODO
+	// Instruction index
+
+	int i = 0;
+	while (fscanf(in, "%d %d %d %d", &ins[i].op, &ins[i].r, &ins[i].l, &ins[i].m) != EOF)
+
+	{
+
+		i++;
+
+	}
+	// Return the number of instructions read
+
+	return i;
 }
 
 /**
@@ -70,14 +82,21 @@ int readInstructions(FILE* in, Instruction* ins)
  * */
 void dumpInstructions(FILE* out, Instruction* ins, int numOfIns)
 {
-    // Header
-    fprintf(out,
-        "***Code Memory***\n%3s %3s %3s %3s %3s \n",
-        "#", "OP", "R", "L", "M"
-        );
-
-    // Instructions
-    // TODO
+	// Header
+	fprintf(out,
+		"***Code Memory***\n%3s %3s %3s %3s %3s \n",
+		"#", "OP", "R", "L", "M"
+	);
+	// Instructions
+	int i;
+	for (i = 0; i < numOfIns; i++)
+	{
+		fprintf(
+			out,
+			"%3d %3s %3d %3d %3d \n", // formatting
+			i, opcodes[ins[i].op], ins[i].r, ins[i].l, ins[i].m
+		);
+	}
 }
 
 /**
@@ -100,7 +119,43 @@ int getBasePointer(int *stack, int currentBP, int L)
 // Do not forget to use '|' character between stack frames
 void dumpStack(FILE* out, int* stack, int sp, int bp)
 {
-    // TODO
+	if (bp == 0)
+		return;
+	// bottom-most level, where a single zero value lies
+
+	if (bp == 1)
+
+	{
+
+		fprintf(out, "%3d ", 0);
+
+	}
+
+	// former levels - if exists
+
+	if (bp != 1)
+
+	{
+
+		dumpStack(out, stack, bp - 1, stack[bp + 2]);
+
+	}
+
+	// top level: current activation record
+	if (bp <= sp)
+	{
+		// indicate a new activation record
+		fprintf(out, "| ");
+		// print the activation record
+		int i;
+		for (i = bp; i <= sp; i++)
+		{
+
+			fprintf(out, "%3d ", stack[i]);
+
+		}
+
+	}
 }
 
 /**
@@ -152,8 +207,13 @@ void simulateVM(
 
     // Before starting the code execution on the virtual machine,
     // .. write the header for the simulation part (***Execution***)
-    // TODO
+	fprintf(outp, "\n***Execution***\n");
+	fprintf(
+		outp,
+		"%3s %3s %3s %3s %3s %3s %3s %3s %3s \n",         // formatting
+		"#", "OP", "R", "L", "M", "PC", "BP", "SP", "STK" // titles
 
+	);
     // Create a virtual machine
     // TODO
 
@@ -162,11 +222,13 @@ void simulateVM(
 
 	int vmState = 0;
     // Fetch&Execute the instructions on the virtual machine until halting
-    while( /* TODO: Until halt is signalled.. */ )
+    while( 1/* TODO: Until halt is signalled.. */ )
     {
         // Fetch&Execute
         // TODO Execute instruction. The result will be HALT (1) or CONT (0).
 		// We use this result to determine whether we continue execution or not.
+
+		fprintf(outp, "\n");
     }
 
     // Above loop ends when machine halts. Therefore, dump halt message.
