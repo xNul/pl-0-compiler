@@ -195,7 +195,7 @@ void simulateVM(
     int insCount = readInstructions(inp, ins);
 
     // Dump instructions to the output file
-    // TODO
+    dumpInstructions(outp, ins, insCount);
 
     // Before starting the code execution on the virtual machine,
     // .. write the header for the simulation part (***Execution***)
