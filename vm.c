@@ -52,7 +52,7 @@ void initVM(VirtualMachine* vm)
 {
     if(vm)
     {
-        // TODO
+        vm->BP = 1;
     }
 }
 
@@ -210,7 +210,7 @@ void simulateVM(
     VirtualMachine vm;
 
     // Initialize the virtual machine
-    // TODO
+    initVM(&vm);
 
     // Fetch&Execute the instructions on the virtual machine until halting
     while( 1 /* TODO: Until halt is signalled.. */ )
