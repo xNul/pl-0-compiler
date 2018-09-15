@@ -213,7 +213,8 @@ void simulateVM(
     initVM(&vm);
 
     // Fetch&Execute the instructions on the virtual machine until halting
-    while( 1 /* TODO: Until halt is signalled.. */ )
+    int vmState = 0;
+    while(!vmState)
     {
         // Fetch
         vm.IR = vm.PC;
@@ -222,7 +223,7 @@ void simulateVM(
         vm.PC++;
 
         // Execute the instruction
-        // TODO
+        vmState = executeInstruction(&vm, ins[vm.IR], vm_inp, vm_outp);
 
         // Print current state
         // TODO: Following is a possible way of printing the current state
