@@ -108,8 +108,8 @@ int getBasePointer(int *stack, int currentBP, int L)
     // Iterate L levels down until we retrieve our desired b1 (base)
     while (L > 0)
     {
-      b1 = stack[b1 + 1];
-      L--;
+        b1 = stack[b1 + 1];
+        L--;
     }
     
     return b1;
