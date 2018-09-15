@@ -103,7 +103,7 @@ void dumpInstructions(FILE* out, Instruction* ins, int numOfIns)
 int getBasePointer(int *stack, int currentBP, int L)
 {
     // Based off of syllabus example. (Appendix D)
-    int b1;
+    int b1 = currentBP;
     
     // Iterate L levels down until we retrieve our desired b1 (base)
     while (L > 0)
