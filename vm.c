@@ -235,7 +235,7 @@ void simulateVM(
         );
 
         // Print stack info
-        // TODO
+        dumpStack(outp, vm.stack, vm.SP, vm.BP);
 
         fprintf(outp, "\n");
     }
