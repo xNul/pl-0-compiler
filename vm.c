@@ -226,16 +226,13 @@ void simulateVM(
         vmState = executeInstruction(&vm, ins[vm.IR], vm_inp, vm_outp);
 
         // Print current state
-        // TODO: Following is a possible way of printing the current state
-        // .. where instrBeingExecuted is the address of the instruction at vm
-        // ..  memory and instr is the instruction being executed.
-        /* fprintf(
+        fprintf(
             outp,
             "%3d %3s %3d %3d %3d %3d %3d %3d ",
-            instrBeingExecuted, // place of instruction at memory
-             opcodes[instr.op], instr.r, instr.l, instr.m, // instruction info
-             vm.PC, vm.BP, vm.SP // vm info
-        );*/
+            vm.IR,
+            opcodes[ins[vm.IR].op], ins[vm.IR].r, ins[vm.IR].l, ins[vm.IR].m,
+            vm.PC, vm.BP, vm.SP
+        );
 
         // Print stack info
         // TODO
