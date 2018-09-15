@@ -191,7 +191,8 @@ void simulateVM(
     )
 {
     // Read instructions from file
-    // TODO
+    Instruction ins[MAX_CODE_LENGTH];
+    int insCount = readInstructions(inp, ins);
 
     // Dump instructions to the output file
     // TODO
