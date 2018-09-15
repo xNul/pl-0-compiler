@@ -159,7 +159,74 @@ int executeInstruction(VirtualMachine* vm, Instruction ins, FILE* vmIn, FILE* vm
 {
     switch(ins.op)
     {
-        // TODO
+        case 1:
+            vm->RF[ins.r] = ins.m;
+            break;
+        case 2:
+            vm->SP = vm->BP-1;
+            vm->BP = vm->stack[vm->SP+3];
+            vm->PC = vm->stack[vm->SP+4];
+            break;
+        case 3:
+            vm->RF[ins.r] = vm->stack[getBasePointer(vm->stack, vm->BP, ins.l)+ins.m];
+            break;
+        case 4:
+            vm->stack[getBasePointer(vm->stack, vm->BP, ins.l)+ins.m] = vm->RF[ins.r];
+            break;
+        case 5:
+            vm->stack[vm->SP+1] = 0;
+            vm->stack[vm->SP+2] = getBasePointer(vm->stack, vm->BP, ins.l);
+            vm->stack[vm->SP+3] = vm->BP;
+            vm->stack[vm->SP+4] = vm->PC;
+            vm->BP = vm->SP+1;
+            vm->PC = ins.m;
+            break;
+        case 6:
+            vm->SP = vm->SP+ins.m;
+            break;
+        case 7:
+            vm->PC = ins.m;
+            break;
+        case 8:
+            if (vm->RF[ins.r] == 0)
+            {
+              vm->PC = ins.m;
+            }
+            break;
+        case 9:
+            fprintf(vmOut, "%d ", vm->RF[ins.r]);
+            break;
+        case 10:
+            fscanf(vmIn, "%d", &(vm->RF[ins.r]));
+            break;
+        case 11:
+            return HALT;
+        case 12:
+            break;
+        case 13:
+            break;
+        case 14:
+            break;
+        case 15:
+            break;
+        case 16:
+            break;
+        case 17:
+            break;
+        case 18:
+            break;
+        case 19:
+            break;
+        case 20:
+            break;
+        case 21:
+            break;
+        case 22:
+            break;
+        case 23:
+            break;
+        case 24:
+            break;
         default:
             fprintf(stderr, "Illegal instruction?");
             return HALT;
