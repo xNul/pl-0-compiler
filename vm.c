@@ -207,7 +207,11 @@ void simulateVM(
     );
 
     // Create a virtual machine
-    // TODO
+    VirtualMachine vm;
+    vm.BP = 1;
+    vm.SP = 0;
+    vm.PC = 0;
+    vm.IR = 0;
 
     // Initialize the virtual machine
     // TODO
