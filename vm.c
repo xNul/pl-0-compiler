@@ -216,10 +216,10 @@ void simulateVM(
     while( 1 /* TODO: Until halt is signalled.. */ )
     {
         // Fetch
-        // TODO
+        vm.IR = vm.PC;
 
         // Advance PC - before execution!
-        // TODO
+        vm.PC++;
 
         // Execute the instruction
         // TODO
