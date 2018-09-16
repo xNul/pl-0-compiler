@@ -202,30 +202,43 @@ int executeInstruction(VirtualMachine* vm, Instruction ins, FILE* vmIn, FILE* vm
         case 11:
             return HALT;
         case 12:
+			vm->RF[ins.r] = -vm->RF[ins.l];
             break;
         case 13:
+			vm->RF[ins.r] = (vm->RF[ins.l] + vm->RF[ins.m]);
             break;
         case 14:
+			vm->RF[ins.r] = (vm->RF[ins.l] - vm->RF[ins.m]);
             break;
         case 15:
+			vm->RF[ins.r] = (vm->RF[ins.l] * vm->RF[ins.m]);
             break;
         case 16:
+			vm->RF[ins.r] = (vm->RF[ins.l] / vm->RF[ins.m]);
             break;
         case 17:
+			vm->RF[ins.r] = vm->RF[ins.r] % 2; // 1 if Odd, 0 if even
             break;
         case 18:
+			vm->RF[ins.r] = (vm->RF[ins.l] % vm->RF[ins.m]);
             break;
         case 19:
+			vm->RF[ins.r] = (vm->RF[ins.l] == vm->RF[ins.m]);
             break;
         case 20:
+			vm->RF[ins.r] = (vm->RF[ins.l] != vm->RF[ins.m]);
             break;
         case 21:
+			vm->RF[ins.r] = (vm->RF[ins.l] < vm->RF[ins.m]);
             break;
         case 22:
+			vm->RF[ins.r] = (vm->RF[ins.l] <= vm->RF[ins.m]);
             break;
         case 23:
+			vm->RF[ins.r] = (vm->RF[ins.l] > vm->RF[ins.m]);
             break;
         case 24:
+			vm->RF[ins.r] = (vm->RF[ins.l] >= vm->RF[ins.m]);
             break;
         default:
             fprintf(stderr, "Illegal instruction?");
