@@ -1,0 +1,9 @@
+SUCCESS: No errors found in the source code.
+
+Token Type         Lexeme
+        29            var
+         2              m
+        17              ,
+         2              n
+        18              ;
+        19              .

@@ -1,0 +1,3 @@
+const constm = 7, constn = 85;  
+var varx,oddx,readx,writex,ifx,thenx,elsex,callx,beginx,endx,whilex,dox;
+.

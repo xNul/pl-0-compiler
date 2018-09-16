@@ -1,0 +1,9 @@
+SUCCESS: No errors found in the source code.
+
+Token Type         Lexeme
+        28          const
+         2              m
+         9              =
+         3              7
+        18              ;
+        19              .

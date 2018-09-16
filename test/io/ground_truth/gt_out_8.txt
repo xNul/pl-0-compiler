@@ -1,0 +1,19 @@
+SUCCESS: No errors found in the source code.
+
+Token Type         Lexeme
+        28          const
+         2              m
+         9              =
+         3              7
+        17              ,
+         2              n
+         9              =
+         3             85
+        18              ;
+        21          begin
+         2              x
+        20             :=
+         2              m
+        18              ;
+        22            end
+        19              .
