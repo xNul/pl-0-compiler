@@ -53,6 +53,8 @@ void initVM(VirtualMachine* vm)
     if(vm)
     {
         vm->BP = 1;
+        
+        // All other variables are automatically initialized to 0 in C
     }
 }
 
