@@ -341,7 +341,11 @@ LexerOut lexicalAnalyzer(char* sourceCode)
     }
     else
     {
-        // No error! Copy the token list
+        // No error!
+        lexerOut.lexerError = NONE;
+        lexerOut.errorLine = -1;
+
+        // Copy the token list
 
         // The scope of LexerState ends here. The ownership of the tokenlist
         // .. is being passed to LexerOut. Therefore, neither deletion of the
