@@ -98,6 +98,10 @@ void DFA_Digit(LexerState*);
  * */
 void DFA_Special(LexerState*);
 
+/// Consumes the current identifier in the lexer state and returns a string of that identifier.
+char* ConsumeIdentifier(LexerState* lexerState);
+
+
 /* ************************************************************************** */
 /* Definitions ************************************************************** */
 /* ************************************************************************** */
@@ -233,37 +237,84 @@ void DFA_Digit(LexerState* lexerState)
 
 void DFA_Special(LexerState* lexerState)
 {
-    // There are three cases for symbols starting with special:
-    // Case.1: Beginning of a comment: "/*"
-    // Case.2: Two character special symbol: "<>", "<=", ">=", ":="
-    // Case.3: One character special symbol: "+", "-", "(", etc.
+	char* currentIdentifier = ConsumeIdentifier(lexerState);
 
-    // For case.1, you are recommended to consume all the characters regarding
-    // .. the comment, and return. This way, lexicalAnalyzer() func can decide
-    // .. what to do with the next character.
+	// There are three cases for symbols starting with special:
+	// Case.1: Beginning of a comment: "/*"
+	// Case.2: Two character special symbol: "<>", "<=", ">=", ":="
+	// Case.3: One character special symbol: "+", "-", "(", etc.
 
-    // For case.2 and case.3, you could consume the characters, add the 
-    // .. corresponding token to the tokenlist of lexerState, and return.
+	// For case.1, you are recommended to consume all the characters regarding
+	// .. the comment, and return. This way, lexicalAnalyzer() func can decide
+	// .. what to do with the next character.
+	if (strstr(currentIdentifier, "/*") != NULL)
+	{
+		int len = strlen(lexerState->sourceCode);
+		// Iterate through the source code until we find the */ or reach EOF
+		while (lexerState->charInd != len - 1)
+		{
+			// If we see the end of the comment, iterate once more and then break.
+			if (lexerState->sourceCode[lexerState->charInd - 1] == '*' && lexerState->sourceCode[lexerState->charInd] == '/')
+			{
+				lexerState->charInd++;
+				break;
 
-    // For adding a token to tokenlist, you could create a token, fill its 
-    // .. fields as required and use the following call:
-    // addToken(&lexerState->tokenList, token);
+			}
+			else
+			{
+				lexerState->charInd++;
+			}
 
-    /**
-     * TODO
-     * Implement this function
-     * */
+		}
+		return;
+	}
+	else
+	{
+		// For case.2 and case.3, you could consume the characters, add the 
+		// .. corresponding token to the tokenlist of lexerState, and return.
 
-    // TODO: Remove the below message after your implementation
-    // Until implementing, let's just consume the current character and return.
-    char c = lexerState->sourceCode[lexerState->charInd];
+		// Iterate through tokens to find the one we're holding in currentIdentifier
+		int currentToken = 1;
+		while (currentToken < lastReservedToken)
+		{
+			if (tokens[currentToken] != NULL && strcmp(tokens[currentToken], currentIdentifier) == 0)
+			{
+				break;
+			}
+			currentToken++;
+		}
+		Token token;
+		token.id = currentToken;
+		strcpy(token.lexeme, tokens[currentToken]);
 
-    printf("DFA_Special: The character \'%c\' was seen and ignored. Please implement the function.\n", c);
-
-    // The character was consumed (by ignoring). Advance to the next character.
-    lexerState->charInd++;
-
+		// Add the token to the lexer state
+		addToken(&lexerState->tokenList, token);
+	}
     return;
+}
+
+/// Takes the identifier currently being pointed to and returns it as a char*. Note that this method will advance the lexerState->charIndex.
+char* ConsumeIdentifier(LexerState* lexerState)
+{
+	// Current evaluation
+	char* characters = calloc(1, sizeof(char) * 1);
+	// Consume until we reach a non ' ' char
+	while (lexerState->sourceCode[lexerState->charInd] == ' ')
+	{
+		lexerState->charInd++;
+	}
+	// While we see characters that are non ' ', '\n', '\0'
+	while (lexerState->sourceCode[lexerState->charInd] != ' ' && lexerState->sourceCode[lexerState->charInd] != '\0' && lexerState->sourceCode[lexerState->charInd] != '\n')
+	{
+		int len = strlen(characters);
+		characters = realloc(characters, (len + 1) * sizeof(char));
+		characters[len] = lexerState->sourceCode[lexerState->charInd];
+		characters[len + 1] = '\0';
+
+		lexerState->charInd++;
+	}
+
+	return characters;
 }
 
 LexerOut lexicalAnalyzer(char* sourceCode)
