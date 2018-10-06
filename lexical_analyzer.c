@@ -212,6 +212,12 @@ void DFA_Digit(LexerState* lexerState)
     // Case.2) It is an ill-formed number exceeding 5 digits - Lexer Error!
     // Case.3) It is an ill-formed variable name starting with digit - Lexer Error!
 
+	// Convert to integer
+	int num = strtoi(characters, NULL, 10);
+
+	// If larger than 99999 throw error
+	if (num > 99999) lexerState->lexerError = NUM_TOO_LONG;
+
     // Tokenize as numbersym only if it is case 1. Otherwise, set the required
     // .. fields of lexerState to corresponding LexErr and return.
 
