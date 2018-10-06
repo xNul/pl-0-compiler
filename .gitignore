@@ -1,0 +1,14 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+*.suo
+*.db
+/.vs/ProjectSettings.json
+/.vs
+/VisualStudioSolution/Assignment2-lexer-net-pro/.vs/Assignment2-lexer-net-pro/v15
+*.lastbuildstate
+*.tlog
+/VisualStudioSolution/Assignment2-lexer-net-pro/Debug
+/VisualStudioSolution/Assignment2-lexer-net-pro/Assignment2-lexer-net-pro.vcxproj.user
+/VisualStudioSolution/Assignment2-lexer-net-pro/Assignment2-lexer-net-pro.vcxproj.filters
