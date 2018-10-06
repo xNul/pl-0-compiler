@@ -213,25 +213,32 @@ void DFA_Digit(LexerState* lexerState)
     // Case.3) It is an ill-formed variable name starting with digit - Lexer Error!
 
 	// Convert to integer
-	int num = strtoi(characters, NULL, 10);
+	char* strPtr;
+	int num = strtol(characters, &strPtr, 10);
 
-	// If larger than 99999 throw error
-	if (num > 99999) lexerState->lexerError = NUM_TOO_LONG;
 
-    // Tokenize as numbersym only if it is case 1. Otherwise, set the required
-    // .. fields of lexerState to corresponding LexErr and return.
+	// If larger than the max length throw error
+	if (strlen(characters) > MAX_NUM_DIGIT_LENGTH)
+	{
+		lexerState->lexerError = NUM_TOO_LONG;
+		return;
+	}
 
-    // For adding a token to tokenlist, you could create a token, fill its 
-    // .. fields as required and use the following call:
-    // addToken(&lexerState->tokenList, token);
+	// If number is a malformed variable name
+	if (strlen(strPtr) > 0) 
+	{
+		lexerState->lexerError = NONLETTER_VAR_INITIAL;
+		return;
+	}
 
-    /**
-     * TODO
-     * Implement this function
-     * */
+	// If number is a well-formed, valid number
+	// Tokenize as numbersym only if it is case 1. Otherwise, set the required
+	// .. fields of lexerState to corresponding LexErr and return.
+	Token token;
+	token.id = numbersym;
+	strcpy(token.lexeme, characters);
 
-    // TODO: Remove the below message after your implementation
-    // Until implementing, let's just consume the current character and return.
+	 addToken(&lexerState->tokenList, token);
 
     return;
 }
