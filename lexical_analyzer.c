@@ -206,6 +206,7 @@ void DFA_Alpha(LexerState* lexerState)
  * */
 void DFA_Digit(LexerState* lexerState)
 {
+	char* characters = ConsumeIdentifier(lexerState);
     // There are three cases for symbols starting with number:
     // Case.1) It is a well-formed number
     // Case.2) It is an ill-formed number exceeding 5 digits - Lexer Error!
@@ -225,12 +226,6 @@ void DFA_Digit(LexerState* lexerState)
 
     // TODO: Remove the below message after your implementation
     // Until implementing, let's just consume the current character and return.
-    char c = lexerState->sourceCode[lexerState->charInd];
-
-    printf("DFA_Digit: The character \'%c\' was seen and ignored. Please implement the function.\n", c);
-
-    // The character was consumed (by ignoring). Advance to the next character.
-    lexerState->charInd++;
 
     return;
 }
@@ -303,8 +298,18 @@ char* ConsumeIdentifier(LexerState* lexerState)
 	{
 		lexerState->charInd++;
 	}
+	// Before we filter out semicolons, check if it's the first item being checked.
+	if (lexerState->sourceCode[lexerState->charInd] == ';')
+	{
+		lexerState->charInd++;
+		return ";";
+	}
 	// While we see characters that are non ' ', '\n', '\0'
-	while (lexerState->sourceCode[lexerState->charInd] != ' ' && lexerState->sourceCode[lexerState->charInd] != '\0' && lexerState->sourceCode[lexerState->charInd] != '\n')
+	while (lexerState->sourceCode[lexerState->charInd] != ' ' &&
+		lexerState->sourceCode[lexerState->charInd] != '\0' &&
+		lexerState->sourceCode[lexerState->charInd] != '\n' &&
+		// If we see a semicolon, it's valid syntax even if it's attached to the identifier. We must skip it and catch it in the symbol method.
+		lexerState->sourceCode[lexerState->charInd] != ';')
 	{
 		int len = strlen(characters);
 		characters = realloc(characters, (len + 1) * sizeof(char));
