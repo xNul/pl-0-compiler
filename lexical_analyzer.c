@@ -178,19 +178,50 @@ void DFA_Alpha(LexerState* lexerState)
     // .. fields as required and use the following call:
     // addToken(&lexerState->tokenList, token);
 
-    /**
-     * TODO
-     * Implement this function
-     * */
-
-    // TODO: Remove the below message after your implementation
-    // Until implementing, let's just consume the current character and return.
-    char c = lexerState->sourceCode[lexerState->charInd];
-
-    printf("DFA_Alpha: The character \'%c\' was seen and ignored. Please implement the function.\n", c);
-
-    // The character was consumed (by ignoring). Advance to the next character.
-    lexerState->charInd++;
+    char* lexeme = ConsumeIdentifier(lexerState);
+    
+    // If larger than the max length throw error
+    if (strlen(lexeme) > MAX_NUM_DIGIT_LENGTH)
+    {
+        lexerState->lexerError = NUM_TOO_LONG;
+        
+        return;
+    }
+    
+    // Reserved words are checked before ident, because ident can
+    // be any string except for a few conditions like it's a reserved word.
+    
+    // Case 1: Add if is a reserved token and corresponding lexeme.
+    
+    if (strcmp(tokens[oddsym], lexeme) == 0)
+    {
+        Token token;
+        token.id = oddsym;
+        strcpy(token.lexeme, lexeme);
+        addToken(&lexerState->tokenList, token);
+        
+        return;
+    }
+    
+    for (int i=21; i < 34; i++)
+    {
+        if (strcmp(tokens[i], lexeme) == 0)
+        {
+            Token token;
+            token.id = i;
+            strcpy(token.lexeme, lexeme);
+            addToken(&lexerState->tokenList, token);
+            
+            return;
+        }
+    }
+    
+    // Case 2: Add as a variable (ident)
+    
+    Token token;
+    token.id = identsym;
+    strcpy(token.lexeme, lexeme);
+    addToken(&lexerState->tokenList, token);
 
     return;
 }
