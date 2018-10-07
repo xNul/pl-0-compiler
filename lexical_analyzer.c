@@ -181,9 +181,9 @@ void DFA_Alpha(LexerState* lexerState)
     char* lexeme = ConsumeIdentifier(lexerState);
     
     // If larger than the max length throw error
-    if (strlen(lexeme) > MAX_NUM_DIGIT_LENGTH)
+    if (strlen(lexeme) > MAX_IDENTIFIER_LENGTH)
     {
-        lexerState->lexerError = NUM_TOO_LONG;
+        lexerState->lexerError = NAME_TOO_LONG;
         
         return;
     }
