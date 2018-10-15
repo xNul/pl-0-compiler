@@ -1,0 +1,13 @@
+/* A simple input */
+const m = 7;
+var  i;
+
+procedure myproc;
+  begin
+  end;
+
+/* main func */
+begin
+  i := m;
+  call myproc
+end.

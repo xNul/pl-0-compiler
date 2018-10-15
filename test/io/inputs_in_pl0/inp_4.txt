@@ -1,0 +1,14 @@
+/* Error case 1: '=' must be followed by a number */
+const m = 7;
+var  i;
+
+procedure myproc;
+  const n = 8; k = n; /* error! */
+  begin
+  end;
+
+/* main func */
+begin
+  i := m;
+  call myproc
+end.

@@ -1,0 +1,46 @@
+/* Symbols at different levels - more complex */
+const a = 0;
+var i;
+
+procedure myproc;,
+  /* Level 1 */
+  const b = 1;
+  var j;
+
+  procedure insideproc;
+    /* Level 2 */
+    const c = 2;
+    var k;
+    begin
+      write c
+    end;
+  
+  procedure insideproc2;
+    /* Level 2 */
+    const f = 3, l = 5;
+    var v1, v2;
+
+    procedure procAt3;
+      var v3, v4, v5;
+      begin
+        read v3;
+        read v4;
+        v5 := v3 + v4;
+        write v5
+      end;
+
+    begin
+      write f;
+      call procAt3
+    end;
+
+  begin
+    read j;
+    call insideproc
+  end;
+
+/* main func */
+begin
+  i := m;
+  call myproc
+end.

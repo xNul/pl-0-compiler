@@ -1,0 +1,22 @@
+/* Error case 5: Period expected */
+const y = 1, z = 2;
+var  i, j, k;
+
+procedure proc1;
+  const m = 3;
+
+  procedure proc2;
+    var x;
+    begin
+      read x
+    end;
+
+  begin
+    write m
+  end;
+
+/* main func */
+begin
+  call proc1
+end
+/* error! */

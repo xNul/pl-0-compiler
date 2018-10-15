@@ -1,0 +1,14 @@
+/* Error case 2:  Identifier must be followed by '=' */
+const m = 7;
+var  i;
+
+procedure myproc;
+  const n; /* error! */
+  begin
+  end;
+
+/* main func */
+begin
+  i := m;
+  call myproc
+end.
