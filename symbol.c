@@ -65,7 +65,7 @@ void printSymbolTable(SymbolTable* symbolTable, FILE* out)
 
             case PROC:
                 fprintf(out, 
-                    "   Type: VAR\n"
+                    "   Type: PROC\n"
                     "   Name: %s\n"
                     "  Level: %d\n",
                     symbol->name, symbol->level);

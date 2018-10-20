@@ -56,7 +56,7 @@ Symbol Table
   Level: 0
 
 #2
-   Type: VAR
+   Type: PROC
    Name: myproc
   Level: 0
 

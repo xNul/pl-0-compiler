@@ -92,7 +92,7 @@ Symbol Table
   Level: 0
 
 #2
-   Type: VAR
+   Type: PROC
    Name: myproc
   Level: 0
 
@@ -108,7 +108,7 @@ Symbol Table
   Level: 1
 
 #5
-   Type: VAR
+   Type: PROC
    Name: insideproc
   Level: 1
 
