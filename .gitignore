@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/VisualStudio/Assignment3/.vs/Assignment3/v15/ipch
+/VisualStudio/Assignment3/.vs/Assignment3/v15
+*.vcxproj
+*.filters
+*.user
