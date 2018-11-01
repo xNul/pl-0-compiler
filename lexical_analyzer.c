@@ -391,10 +391,10 @@ LexerOut lexicalAnalyzer(char* sourceCode)
         char currentSymbol = lexerState.sourceCode[lexerState.charInd];
 
         // Skip spaces or new lines until an effective character is seen
-        while(currentSymbol == ' ' || currentSymbol == '\n')
+        while(currentSymbol == ' ' || currentSymbol == '\n' || currentSymbol == '\r')
         {
             // Advance line number if required
-            if(currentSymbol == '\n')
+            if(currentSymbol == '\n' || currentSymbol == '\r')
                 lexerState.lineNum++;
 
             // Advance to the following character
@@ -422,6 +422,7 @@ LexerOut lexicalAnalyzer(char* sourceCode)
                 break;
             case INVALID:
                 lexerState.lexerError = INV_SYM;
+                printf("%d", lexerState.sourceCode[lexerState.charInd]);
                 break;
         }
     }
