@@ -222,8 +222,34 @@ int condition()
 {
     printNonTerminal(CONDITION);
 
-    /* TODO: Implement */
+	if (getCurrentTokenType() == oddsym)
+	{
+		printCurrentToken(); // Print the token
+		nextToken(); // Go to next token
 
+		// Check error
+		int err = expression();
+		if (err) return err;
+	}
+	else
+	{
+		int err = expression();
+		if (err) return err;
+
+		if (getCurrentTokenType() != relop())
+		{
+			// relational operator expected
+			return 12;
+		}
+
+		printCurrentToken(); // Print the token
+		nextToken(); // Go to next token
+
+		// Parse expression again, returning error if immediate error
+		err = expression();
+		if (err) return err;
+	}
+	// Success
     return 0;
 }
 
@@ -240,7 +266,26 @@ int expression()
 {
     printNonTerminal(EXPRESSION);
 
-    /* TODO: Implement */
+	if (getCurrentTokenType() == plussym || getCurrentTokenType() == minussym)
+	{
+		printCurrentToken(); // Print the token
+		nextToken(); // Go to next token
+	}
+	// Get term error code
+	int err = term();
+
+	// If there was an error, return immediately
+	if (err) return err;
+
+	while (getCurrentTokenType() == plussym || getCurrentTokenType() == minussym)
+	{
+		printCurrentToken(); // Print the token
+		nextToken(); // Go to next token
+
+		// Get next term and check for error
+		err = term();
+		if (err) return err;
+	}
 
     return 0;
 }
@@ -249,8 +294,22 @@ int term()
 {
     printNonTerminal(TERM);
 
-    /* TODO: Implement */
+	// Run the factor function
+	int err = factor();
+	if (err) return err;
+	/*
+		While current type is multsym or slashsym	
+	*/
+	while (getCurrentTokenType() == multsym || getCurrentTokenType() == slashsym)
+	{
+		printCurrentToken(); // Print the token
+		nextToken(); // Go to next token
 
+		// Get the code from factor. If error, return the error
+		err = factor();
+		if (err) return err;
+	}
+	// Success returns 0
     return 0;
 }
 
