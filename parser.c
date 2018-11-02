@@ -257,9 +257,64 @@ int relop()
 {
     printNonTerminal(REL_OP);
 
-    /* TODO: Implement */
+    /*
+		Possible cases are =, !=, <, <=, >, >=
+	*/
+	if (getCurrentTokenType() == eqsym)
+	{
+		printCurrentToken(); // Print the token
+		nextToken(); // Go to next token
 
-    return 0;
+		// Success
+		return 0;
+	}
+	else if (getCurrentTokenType() == neqsym)
+	{
+		printCurrentToken(); // Print the token
+		nextToken(); // Go to next token
+		
+		// Success
+		return 0;
+	}
+	else if (getCurrentTokenType() == lessym)
+	{
+		printCurrentToken(); // Print the token
+		nextToken(); // Go to next token
+
+		// Success
+		return 0;
+	}
+	else if (getCurrentTokenType() == leqsym)
+	{
+		printCurrentToken(); // Print the token
+		nextToken(); // Go to next token
+
+		// Success
+		return 0;
+	}
+	else if (getCurrentTokenType() == gtrsym)
+	{
+		printCurrentToken(); // Print the token
+		nextToken(); // Go to next token
+
+		// Success
+		return 0;
+	}
+	else if (getCurrentTokenType() == geqsym)
+	{
+		printCurrentToken(); // Print the token
+		nextToken(); // Go to next token
+
+		// Success
+		return 0;
+	}
+	else
+	{
+		/*
+			A relational operator was expected
+		*/
+		return 12;
+	}
 }
 
 int expression()
