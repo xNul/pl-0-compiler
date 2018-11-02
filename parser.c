@@ -167,7 +167,18 @@ int program()
 {
     printNonTerminal(PROGRAM);
 
-    /* TODO: Implement */
+	int err = block();
+	if (err) return err;
+
+	if (getCurrentTokenType() != periodsym)
+	{
+		/*
+			Expected a period.
+			Return error.
+		*/
+
+		return 6;
+	}
 
     return 0;
 }
