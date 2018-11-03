@@ -7,3 +7,5 @@
 *.vcxproj
 *.filters
 *.user
+/VisualStudio/Assignment3/Debug
+*.txt
