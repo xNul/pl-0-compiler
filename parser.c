@@ -224,7 +224,102 @@ int statement()
 {
     printNonTerminal(STATEMENT);
 
-    /* TODO: Implement */
+	if (getCurrentTokenType() == identsym)
+	{
+		printCurrentToken(); // Printing the token is essential!
+		nextToken(); // Go to the next token..
+		if (getCurrentTokenType() != becomessym)
+		{
+			// We expected a becomessym
+			// Assignment operator expected
+			return 7;
+		}
+		printCurrentToken(); // Printing the token is essential!
+		nextToken(); // Go to the next token..
+
+		// Check for error in expression
+		int err = expression();
+		if (err) return err;
+	}
+	else if (getCurrentTokenType() == callsym)
+	{
+		printCurrentToken(); // Printing the token is essential!
+		nextToken(); // Go to the next token..
+		if (getCurrentTokenType() != identsym)
+		{
+			// We expected identsym
+			// Expected identifier
+			return 3;
+		}
+		printCurrentToken(); // Printing the token is essential!
+		nextToken(); // Go to the next token..
+	}
+	else if (getCurrentTokenType() == beginsym)
+	{
+		printCurrentToken(); // Printing the token is essential!
+		nextToken(); // Go to the next token..
+
+		// Check for error in statement
+		int err = statement();
+		if (err) return err;
+
+		while (getCurrentTokenType() == semicolonsym)
+		{
+			printCurrentToken(); // Printing the token is essential!
+			nextToken(); // Go to the next token..
+
+			int err = statement();
+			if (err) return err;
+		}
+		if (getCurrentTokenType() != endsym) 
+		{
+			// Semicolon or } expected
+			return 10;
+		}
+
+		printCurrentToken(); // Printing the token is essential!
+		nextToken(); // Go to the next token..
+
+	}
+	else if (getCurrentTokenType() == ifsym)
+	{
+		printCurrentToken(); // Printing the token is essential!
+		nextToken(); // Go to the next token..
+
+		int err = condition();
+		if (err) return err;
+
+		if (getCurrentTokenType() != thensym)
+		{
+			// then expected
+			return 9;
+		}
+
+		printCurrentToken(); // Printing the token is essential!
+		nextToken(); // Go to the next token..
+		
+		int err = statement();
+		if (err) return err;
+	}
+	else if (getCurrentTokenType() == whilesym)
+	{
+		printCurrentToken(); // Printing the token is essential!
+		nextToken(); // Go to the next token..
+
+		int err = condition();
+		if (err) return err;
+
+		if (getCurrentTokenType != dosym)
+		{
+			// Expected do
+			return 11;
+		}
+		printCurrentToken(); // Printing the token is essential!
+		nextToken(); // Go to the next token..
+
+		err = statement();
+		if (err) return err;
+	}
 
     return 0;
 }
