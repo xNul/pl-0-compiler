@@ -98,10 +98,6 @@ void DFA_Digit(LexerState*);
  * */
 void DFA_Special(LexerState*);
 
-/// Consumes the current identifier in the lexer state and returns a string of that identifier.
-char* ConsumeIdentifier(LexerState* lexerState);
-
-
 /* ************************************************************************** */
 /* Definitions ************************************************************** */
 /* ************************************************************************** */
@@ -280,7 +276,7 @@ void DFA_Digit(LexerState* lexerState)
 
 void DFA_Special(LexerState* lexerState)
 {
-	// There are three cases for symbols starting with special:
+    // There are three cases for symbols starting with special:
     // Case.1: Beginning of a comment: "/*"
     // Case.2: Two character special symbol: "<>", "<=", ">=", ":="
     // Case.3: One character special symbol: "+", "-", "(", etc.
