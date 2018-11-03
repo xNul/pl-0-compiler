@@ -409,7 +409,7 @@ LexerOut lexicalAnalyzer(char* sourceCode)
         while(currentSymbol == ' ' || currentSymbol == '\n' || currentSymbol == '\r')
         {
             // Advance line number if required
-            if(currentSymbol == '\n' || currentSymbol == '\r')
+            if(currentSymbol == '\n')
                 lexerState.lineNum++;
 
             // Advance to the following character
@@ -437,7 +437,6 @@ LexerOut lexicalAnalyzer(char* sourceCode)
                 break;
             case INVALID:
                 lexerState.lexerError = INV_SYM;
-                printf("%d", lexerState.sourceCode[lexerState.charInd]);
                 break;
         }
     }
