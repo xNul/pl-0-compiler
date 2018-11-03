@@ -280,59 +280,66 @@ void DFA_Digit(LexerState* lexerState)
 
 void DFA_Special(LexerState* lexerState)
 {
-	char* currentIdentifier = ConsumeIdentifier(lexerState);
-
 	// There are three cases for symbols starting with special:
-	// Case.1: Beginning of a comment: "/*"
-	// Case.2: Two character special symbol: "<>", "<=", ">=", ":="
-	// Case.3: One character special symbol: "+", "-", "(", etc.
+    // Case.1: Beginning of a comment: "/*"
+    // Case.2: Two character special symbol: "<>", "<=", ">=", ":="
+    // Case.3: One character special symbol: "+", "-", "(", etc.
 
-	// For case.1, you are recommended to consume all the characters regarding
-	// .. the comment, and return. This way, lexicalAnalyzer() func can decide
-	// .. what to do with the next character.
-	if (strstr(currentIdentifier, "/*") != NULL)
-	{
-		int len = strlen(lexerState->sourceCode);
-		// Iterate through the source code until we find the */ or reach EOF
-		while (lexerState->charInd != len - 1)
-		{
-			// If we see the end of the comment, iterate once more and then break.
-			if (lexerState->sourceCode[lexerState->charInd - 1] == '*' && lexerState->sourceCode[lexerState->charInd] == '/')
-			{
-				lexerState->charInd++;
-				break;
+    // For case.1, you are recommended to consume all the characters regarding
+    // .. the comment, and return. This way, lexicalAnalyzer() func can decide
+    // .. what to do with the next character.
+    
+    if ((lexerState->sourceCode[lexerState->charInd] == '/') && (lexerState->sourceCode[lexerState->charInd+1] == '*'))
+    {
+        while ((lexerState->sourceCode[lexerState->charInd] != '\0') && !((lexerState->sourceCode[lexerState->charInd] == '*') && (lexerState->sourceCode[lexerState->charInd+1] == '/')))
+            lexerState->charInd++;
+      
+        lexerState->charInd++;
+        lexerState->charInd++;
+      
+        return;
+    }
 
-			}
-			else
-			{
-				lexerState->charInd++;
-			}
+    // For case.2 and case.3, you could consume the characters, add the 
+    // .. corresponding token to the tokenlist of lexerState, and return.
 
-		}
-		return;
-	}
-	else
-	{
-		// For case.2 and case.3, you could consume the characters, add the 
-		// .. corresponding token to the tokenlist of lexerState, and return.
+    char lexeme[3];
+    
+    if (getSymbolType(lexerState->sourceCode[lexerState->charInd+1]) == SPECIAL)
+    {
+        lexeme[0] = lexerState->sourceCode[lexerState->charInd];
+        lexeme[1] = lexerState->sourceCode[lexerState->charInd+1];
+        lexeme[2] = '\0';
+        
+        lexerState->charInd++;
+        lexerState->charInd++;
+    }
+    else
+    {
+        lexeme[0] = lexerState->sourceCode[lexerState->charInd];
+        lexeme[1] = '\0';
+        
+        lexerState->charInd++;
+    }
+    
+    Token token;
+    
+    for (int i=plussym; i < becomessym+1; i++)
+    {
+        if (i != oddsym && (strcmp(tokens[i], lexeme) == 0))
+        {
+            token.id = i;
+            break;
+        }
+    }
+    
+    // For adding a token to tokenlist, you could create a token, fill its 
+    // .. fields as required and use the following call:
+    // addToken(&lexerState->tokenList, token);
+    
+    strcpy(token.lexeme, lexeme);
+    addToken(&lexerState->tokenList, token);
 
-		// Iterate through tokens to find the one we're holding in currentIdentifier
-		int currentToken = 1;
-		while (currentToken < lastReservedToken)
-		{
-			if (tokens[currentToken] != NULL && strcmp(tokens[currentToken], currentIdentifier) == 0)
-			{
-				break;
-			}
-			currentToken++;
-		}
-		Token token;
-		token.id = currentToken;
-		strcpy(token.lexeme, tokens[currentToken]);
-
-		// Add the token to the lexer state
-		addToken(&lexerState->tokenList, token);
-	}
     return;
 }
 
