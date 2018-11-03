@@ -343,55 +343,6 @@ void DFA_Special(LexerState* lexerState)
     return;
 }
 
-/// Takes the identifier currently being pointed to and returns it as a char*. Note that this method will advance the lexerState->charIndex.
-char* ConsumeIdentifier(LexerState* lexerState)
-{
-	// Current evaluation
-	char* characters = calloc(1, sizeof(char) * 1);
-	// Consume until we reach a non ' ' char
-	while (lexerState->sourceCode[lexerState->charInd] == ' ')
-	{
-		lexerState->charInd++;
-	}
-	// Before we filter out semicolons, check if it's the first item being checked.
-	if (lexerState->sourceCode[lexerState->charInd] == ';')
-	{
-		lexerState->charInd++;
-		return ";";
-	}
-  // Before we filter out commas, check if it's the first item being checked.
-	if (lexerState->sourceCode[lexerState->charInd] == ',')
-	{
-		lexerState->charInd++;
-		return ",";
-	}
-  // Before we filter out periods, check if it's the first item being checked.
-	if (lexerState->sourceCode[lexerState->charInd] == '.')
-	{
-		lexerState->charInd++;
-		return ".";
-	}
-	// While we see characters that are non ' ', '\n', '\0'
-	while (lexerState->sourceCode[lexerState->charInd] != ' ' &&
-		lexerState->sourceCode[lexerState->charInd] != '\0' &&
-		lexerState->sourceCode[lexerState->charInd] != '\n' &&
-		lexerState->sourceCode[lexerState->charInd] != '\r' &&
-		// If we see a semicolon, it's valid syntax even if it's attached to the identifier. We must skip it and catch it in the symbol method.
-		lexerState->sourceCode[lexerState->charInd] != ';' &&
-		lexerState->sourceCode[lexerState->charInd] != ',' &&
-    lexerState->sourceCode[lexerState->charInd] != '.')
-	{
-		int len = strlen(characters);
-		characters = realloc(characters, (len + 1) * sizeof(char));
-		characters[len] = lexerState->sourceCode[lexerState->charInd];
-		characters[len + 1] = '\0';
-
-		lexerState->charInd++;
-	}
-
-	return characters;
-}
-
 LexerOut lexicalAnalyzer(char* sourceCode)
 {
     if(!sourceCode)
