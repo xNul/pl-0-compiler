@@ -167,59 +167,57 @@ void DFA_Alpha(LexerState* lexerState)
     // Case.1) A reversed token (a reserved word or 'odd')
     // Case.2) An ident
 
+    char lexeme[MAX_IDENTIFIER_LENGTH+1];
+    int i = 0;
+    
     // In both cases, symbol should not exceed 11 characters.
     // Read 11 or less alpha-numeric characters
+    
+    for (i; (i < MAX_IDENTIFIER_LENGTH) && isalnum(lexerState->sourceCode[lexerState->charInd]); i++)
+    {
+        lexeme[i] = lexerState->sourceCode[lexerState->charInd];
+        lexeme[i+1] = '\0';
+        
+        lexerState->charInd++;
+    }
+    
     // If it exceeds 11 alnums, fill LexerState error and return
+    
+    if ((i == MAX_IDENTIFIER_LENGTH) && isalnum(lexerState->sourceCode[lexerState->charInd]))
+    {
+        lexerState->lexerError = NAME_TOO_LONG;
+        return;
+    }
+    
     // Otherwise, try to recognize if the symbol is reserved.
     //   If yes, tokenize by one of the reserved symbols
     //   If not, tokenize as ident.
-
-    // For adding a token to tokenlist, you could create a token, fill its 
-    // .. fields as required and use the following call:
-    // addToken(&lexerState->tokenList, token);
-
-    char* lexeme = ConsumeIdentifier(lexerState);
     
-    // If larger than the max length throw error
-    if (strlen(lexeme) > MAX_IDENTIFIER_LENGTH)
-    {
-        lexerState->lexerError = NAME_TOO_LONG;
-        
-        return;
-    }
-    
-    // Reserved words are checked before ident, because ident can
-    // be any string except for a few conditions like it's a reserved word.
-    
-    // Case 1: Add if is a reserved token and corresponding lexeme.
+    Token token;
     
     if (strcmp(tokens[oddsym], lexeme) == 0)
     {
-        Token token;
         token.id = oddsym;
-        strcpy(token.lexeme, lexeme);
-        addToken(&lexerState->tokenList, token);
-        
-        return;
     }
-    
-    for (int i=21; i < 34; i++)
+    else
     {
-        if (strcmp(tokens[i], lexeme) == 0)
-        {
-            Token token;
-            token.id = i;
-            strcpy(token.lexeme, lexeme);
-            addToken(&lexerState->tokenList, token);
-            
-            return;
-        }
+      for (i=beginsym; i < elsesym+1; i++)
+      {
+          if (strcmp(tokens[i], lexeme) == 0)
+          {
+              token.id = i;
+              break;
+          }
+      }
+      
+      if (i == elsesym+1)
+          token.id = identsym;
     }
     
-    // Case 2: Add as a variable (ident)
+    // For adding a token to tokenlist, you could create a token, fill its 
+    // .. fields as required and use the following call:
+    // addToken(&lexerState->tokenList, token);
     
-    Token token;
-    token.id = identsym;
     strcpy(token.lexeme, lexeme);
     addToken(&lexerState->tokenList, token);
 
