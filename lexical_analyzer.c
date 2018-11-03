@@ -287,7 +287,7 @@ void DFA_Special(LexerState* lexerState)
     
     if ((lexerState->sourceCode[lexerState->charInd] == '/') && (lexerState->sourceCode[lexerState->charInd+1] == '*'))
     {
-        while ((lexerState->sourceCode[lexerState->charInd] != '\0') && !((lexerState->sourceCode[lexerState->charInd] == '*') && (lexerState->sourceCode[lexerState->charInd+1] == '/')))
+        while ((lexerState->sourceCode[lexerState->charInd+2] != '\0') && !((lexerState->sourceCode[lexerState->charInd] == '*') && (lexerState->sourceCode[lexerState->charInd+1] == '/')))
             lexerState->charInd++;
       
         lexerState->charInd++;
@@ -299,43 +299,54 @@ void DFA_Special(LexerState* lexerState)
     // For case.2 and case.3, you could consume the characters, add the 
     // .. corresponding token to the tokenlist of lexerState, and return.
 
+    Token token;
     char lexeme[3];
     
-    if (getSymbolType(lexerState->sourceCode[lexerState->charInd+1]) == SPECIAL)
-    {
-        lexeme[0] = lexerState->sourceCode[lexerState->charInd];
-        lexeme[1] = lexerState->sourceCode[lexerState->charInd+1];
-        lexeme[2] = '\0';
-        
-        lexerState->charInd++;
-        lexerState->charInd++;
-    }
-    else
-    {
-        lexeme[0] = lexerState->sourceCode[lexerState->charInd];
-        lexeme[1] = '\0';
-        
-        lexerState->charInd++;
-    }
-    
-    Token token;
+    lexeme[0] = lexerState->sourceCode[lexerState->charInd];
+    lexeme[1] = lexerState->sourceCode[lexerState->charInd+1];
+    lexeme[2] = '\0';
     
     for (int i=plussym; i < becomessym+1; i++)
     {
-        if (i != oddsym && (strcmp(tokens[i], lexeme) == 0))
+        if (i != oddsym && strlen(tokens[i]) == 2 && (strcmp(tokens[i], lexeme) == 0))
         {
+            // For adding a token to tokenlist, you could create a token, fill its 
+            // .. fields as required and use the following call:
+            // addToken(&lexerState->tokenList, token);
+            
             token.id = i;
-            break;
+            strcpy(token.lexeme, lexeme);
+            addToken(&lexerState->tokenList, token);
+            
+            lexerState->charInd++;
+            lexerState->charInd++;
+            
+            return;
         }
     }
     
-    // For adding a token to tokenlist, you could create a token, fill its 
-    // .. fields as required and use the following call:
-    // addToken(&lexerState->tokenList, token);
+    lexeme[1] = '\0';
     
-    strcpy(token.lexeme, lexeme);
-    addToken(&lexerState->tokenList, token);
-
+    for (int i=plussym; i < becomessym+1; i++)
+    {
+        if (i != oddsym && strlen(tokens[i]) == 1 && (strcmp(tokens[i], lexeme) == 0))
+        {
+            // For adding a token to tokenlist, you could create a token, fill its 
+            // .. fields as required and use the following call:
+            // addToken(&lexerState->tokenList, token);
+          
+            token.id = i;
+            strcpy(token.lexeme, lexeme);
+            addToken(&lexerState->tokenList, token);
+            
+            lexerState->charInd++;
+            
+            return;
+        }
+    }
+    
+    lexerState->lexerError = INV_SYM;
+    
     return;
 }
 
