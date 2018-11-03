@@ -235,39 +235,45 @@ void DFA_Alpha(LexerState* lexerState)
  * */
 void DFA_Digit(LexerState* lexerState)
 {
-	char* characters = ConsumeIdentifier(lexerState);
     // There are three cases for symbols starting with number:
     // Case.1) It is a well-formed number
     // Case.2) It is an ill-formed number exceeding 5 digits - Lexer Error!
     // Case.3) It is an ill-formed variable name starting with digit - Lexer Error!
 
-	// Convert to integer
-	char* strPtr;
-	int num = strtol(characters, &strPtr, 10);
+    char lexeme[MAX_NUM_DIGIT_LENGTH+1];
+    int i = 0;
+    
+    for (i; (i < MAX_NUM_DIGIT_LENGTH) && isdigit(lexerState->sourceCode[lexerState->charInd]); i++)
+    {
+        lexeme[i] = lexerState->sourceCode[lexerState->charInd];
+        lexeme[i+1] = '\0';
+        
+        lexerState->charInd++;
+    }
+    
+    // Tokenize as numbersym only if it is case 1. Otherwise, set the required
+    // .. fields of lexerState to corresponding LexErr and return.
+    
+    if ((i == MAX_NUM_DIGIT_LENGTH) && isdigit(lexerState->sourceCode[lexerState->charInd]))
+    {
+        lexerState->lexerError = NUM_TOO_LONG;
+        return;
+    }
+    
+    if (isalpha(lexerState->sourceCode[lexerState->charInd]))
+    {
+        lexerState->lexerError = NONLETTER_VAR_INITIAL;
+        return;
+    }
 
-
-	// If larger than the max length throw error
-	if (strlen(characters) > MAX_NUM_DIGIT_LENGTH)
-	{
-		lexerState->lexerError = NUM_TOO_LONG;
-		return;
-	}
-
-	// If number is a malformed variable name
-	if (strlen(strPtr) > 0) 
-	{
-		lexerState->lexerError = NONLETTER_VAR_INITIAL;
-		return;
-	}
-
-	// If number is a well-formed, valid number
-	// Tokenize as numbersym only if it is case 1. Otherwise, set the required
-	// .. fields of lexerState to corresponding LexErr and return.
-	Token token;
-	token.id = numbersym;
-	strcpy(token.lexeme, characters);
-
-	 addToken(&lexerState->tokenList, token);
+    // For adding a token to tokenlist, you could create a token, fill its 
+    // .. fields as required and use the following call:
+    // addToken(&lexerState->tokenList, token);
+    
+    Token token;
+    token.id = numbersym;
+    strcpy(token.lexeme, lexeme);
+    addToken(&lexerState->tokenList, token);
 
     return;
 }
