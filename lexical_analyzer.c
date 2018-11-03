@@ -98,10 +98,6 @@ void DFA_Digit(LexerState*);
  * */
 void DFA_Special(LexerState*);
 
-/// Consumes the current identifier in the lexer state and returns a string of that identifier.
-char* ConsumeIdentifier(LexerState* lexerState);
-
-
 /* ************************************************************************** */
 /* Definitions ************************************************************** */
 /* ************************************************************************** */
@@ -167,59 +163,57 @@ void DFA_Alpha(LexerState* lexerState)
     // Case.1) A reversed token (a reserved word or 'odd')
     // Case.2) An ident
 
+    char lexeme[MAX_IDENTIFIER_LENGTH+1];
+    int i = 0;
+    
     // In both cases, symbol should not exceed 11 characters.
     // Read 11 or less alpha-numeric characters
+    
+    for (i; (i < MAX_IDENTIFIER_LENGTH) && isalnum(lexerState->sourceCode[lexerState->charInd]); i++)
+    {
+        lexeme[i] = lexerState->sourceCode[lexerState->charInd];
+        lexeme[i+1] = '\0';
+        
+        lexerState->charInd++;
+    }
+    
     // If it exceeds 11 alnums, fill LexerState error and return
+    
+    if ((i == MAX_IDENTIFIER_LENGTH) && isalnum(lexerState->sourceCode[lexerState->charInd]))
+    {
+        lexerState->lexerError = NAME_TOO_LONG;
+        return;
+    }
+    
     // Otherwise, try to recognize if the symbol is reserved.
     //   If yes, tokenize by one of the reserved symbols
     //   If not, tokenize as ident.
-
-    // For adding a token to tokenlist, you could create a token, fill its 
-    // .. fields as required and use the following call:
-    // addToken(&lexerState->tokenList, token);
-
-    char* lexeme = ConsumeIdentifier(lexerState);
     
-    // If larger than the max length throw error
-    if (strlen(lexeme) > MAX_IDENTIFIER_LENGTH)
-    {
-        lexerState->lexerError = NAME_TOO_LONG;
-        
-        return;
-    }
-    
-    // Reserved words are checked before ident, because ident can
-    // be any string except for a few conditions like it's a reserved word.
-    
-    // Case 1: Add if is a reserved token and corresponding lexeme.
+    Token token;
     
     if (strcmp(tokens[oddsym], lexeme) == 0)
     {
-        Token token;
         token.id = oddsym;
-        strcpy(token.lexeme, lexeme);
-        addToken(&lexerState->tokenList, token);
-        
-        return;
     }
-    
-    for (int i=21; i < 34; i++)
+    else
     {
-        if (strcmp(tokens[i], lexeme) == 0)
-        {
-            Token token;
-            token.id = i;
-            strcpy(token.lexeme, lexeme);
-            addToken(&lexerState->tokenList, token);
-            
-            return;
-        }
+      for (i=beginsym; i < elsesym+1; i++)
+      {
+          if (strcmp(tokens[i], lexeme) == 0)
+          {
+              token.id = i;
+              break;
+          }
+      }
+      
+      if (i == elsesym+1)
+          token.id = identsym;
     }
     
-    // Case 2: Add as a variable (ident)
+    // For adding a token to tokenlist, you could create a token, fill its 
+    // .. fields as required and use the following call:
+    // addToken(&lexerState->tokenList, token);
     
-    Token token;
-    token.id = identsym;
     strcpy(token.lexeme, lexeme);
     addToken(&lexerState->tokenList, token);
 
@@ -237,133 +231,123 @@ void DFA_Alpha(LexerState* lexerState)
  * */
 void DFA_Digit(LexerState* lexerState)
 {
-	char* characters = ConsumeIdentifier(lexerState);
     // There are three cases for symbols starting with number:
     // Case.1) It is a well-formed number
     // Case.2) It is an ill-formed number exceeding 5 digits - Lexer Error!
     // Case.3) It is an ill-formed variable name starting with digit - Lexer Error!
 
-	// Convert to integer
-	char* strPtr;
-	int num = strtol(characters, &strPtr, 10);
+    char lexeme[MAX_NUM_DIGIT_LENGTH+1];
+    int i = 0;
+    
+    for (i; (i < MAX_NUM_DIGIT_LENGTH) && isdigit(lexerState->sourceCode[lexerState->charInd]); i++)
+    {
+        lexeme[i] = lexerState->sourceCode[lexerState->charInd];
+        lexeme[i+1] = '\0';
+        
+        lexerState->charInd++;
+    }
+    
+    // Tokenize as numbersym only if it is case 1. Otherwise, set the required
+    // .. fields of lexerState to corresponding LexErr and return.
+    
+    if ((i == MAX_NUM_DIGIT_LENGTH) && isdigit(lexerState->sourceCode[lexerState->charInd]))
+    {
+        lexerState->lexerError = NUM_TOO_LONG;
+        return;
+    }
+    
+    if (isalpha(lexerState->sourceCode[lexerState->charInd]))
+    {
+        lexerState->lexerError = NONLETTER_VAR_INITIAL;
+        return;
+    }
 
-
-	// If larger than the max length throw error
-	if (strlen(characters) > MAX_NUM_DIGIT_LENGTH)
-	{
-		lexerState->lexerError = NUM_TOO_LONG;
-		return;
-	}
-
-	// If number is a malformed variable name
-	if (strlen(strPtr) > 0) 
-	{
-		lexerState->lexerError = NONLETTER_VAR_INITIAL;
-		return;
-	}
-
-	// If number is a well-formed, valid number
-	// Tokenize as numbersym only if it is case 1. Otherwise, set the required
-	// .. fields of lexerState to corresponding LexErr and return.
-	Token token;
-	token.id = numbersym;
-	strcpy(token.lexeme, characters);
-
-	 addToken(&lexerState->tokenList, token);
+    // For adding a token to tokenlist, you could create a token, fill its 
+    // .. fields as required and use the following call:
+    // addToken(&lexerState->tokenList, token);
+    
+    Token token;
+    token.id = numbersym;
+    strcpy(token.lexeme, lexeme);
+    addToken(&lexerState->tokenList, token);
 
     return;
 }
 
 void DFA_Special(LexerState* lexerState)
 {
-	char* currentIdentifier = ConsumeIdentifier(lexerState);
+    // There are three cases for symbols starting with special:
+    // Case.1: Beginning of a comment: "/*"
+    // Case.2: Two character special symbol: "<>", "<=", ">=", ":="
+    // Case.3: One character special symbol: "+", "-", "(", etc.
 
-	// There are three cases for symbols starting with special:
-	// Case.1: Beginning of a comment: "/*"
-	// Case.2: Two character special symbol: "<>", "<=", ">=", ":="
-	// Case.3: One character special symbol: "+", "-", "(", etc.
+    // For case.1, you are recommended to consume all the characters regarding
+    // .. the comment, and return. This way, lexicalAnalyzer() func can decide
+    // .. what to do with the next character.
+    
+    if ((lexerState->sourceCode[lexerState->charInd] == '/') && (lexerState->sourceCode[lexerState->charInd+1] == '*'))
+    {
+        while ((lexerState->sourceCode[lexerState->charInd+2] != '\0') && !((lexerState->sourceCode[lexerState->charInd] == '*') && (lexerState->sourceCode[lexerState->charInd+1] == '/')))
+            lexerState->charInd++;
+      
+        lexerState->charInd++;
+        lexerState->charInd++;
+      
+        return;
+    }
 
-	// For case.1, you are recommended to consume all the characters regarding
-	// .. the comment, and return. This way, lexicalAnalyzer() func can decide
-	// .. what to do with the next character.
-	if (strstr(currentIdentifier, "/*") != NULL)
-	{
-		int len = strlen(lexerState->sourceCode);
-		// Iterate through the source code until we find the */ or reach EOF
-		while (lexerState->charInd != len - 1)
-		{
-			// If we see the end of the comment, iterate once more and then break.
-			if (lexerState->sourceCode[lexerState->charInd - 1] == '*' && lexerState->sourceCode[lexerState->charInd] == '/')
-			{
-				lexerState->charInd++;
-				break;
+    // For case.2 and case.3, you could consume the characters, add the 
+    // .. corresponding token to the tokenlist of lexerState, and return.
 
-			}
-			else
-			{
-				lexerState->charInd++;
-			}
-
-		}
-		return;
-	}
-	else
-	{
-		// For case.2 and case.3, you could consume the characters, add the 
-		// .. corresponding token to the tokenlist of lexerState, and return.
-
-		// Iterate through tokens to find the one we're holding in currentIdentifier
-		int currentToken = 1;
-		while (currentToken < lastReservedToken)
-		{
-			if (tokens[currentToken] != NULL && strcmp(tokens[currentToken], currentIdentifier) == 0)
-			{
-				break;
-			}
-			currentToken++;
-		}
-		Token token;
-		token.id = currentToken;
-		strcpy(token.lexeme, tokens[currentToken]);
-
-		// Add the token to the lexer state
-		addToken(&lexerState->tokenList, token);
-	}
+    Token token;
+    char lexeme[3];
+    
+    lexeme[0] = lexerState->sourceCode[lexerState->charInd];
+    lexeme[1] = lexerState->sourceCode[lexerState->charInd+1];
+    lexeme[2] = '\0';
+    
+    for (int i=plussym; i < becomessym+1; i++)
+    {
+        if (i != oddsym && strlen(tokens[i]) == 2 && (strcmp(tokens[i], lexeme) == 0))
+        {
+            // For adding a token to tokenlist, you could create a token, fill its 
+            // .. fields as required and use the following call:
+            // addToken(&lexerState->tokenList, token);
+            
+            token.id = i;
+            strcpy(token.lexeme, lexeme);
+            addToken(&lexerState->tokenList, token);
+            
+            lexerState->charInd++;
+            lexerState->charInd++;
+            
+            return;
+        }
+    }
+    
+    lexeme[1] = '\0';
+    
+    for (int i=plussym; i < becomessym+1; i++)
+    {
+        if (i != oddsym && strlen(tokens[i]) == 1 && (strcmp(tokens[i], lexeme) == 0))
+        {
+            // For adding a token to tokenlist, you could create a token, fill its 
+            // .. fields as required and use the following call:
+            // addToken(&lexerState->tokenList, token);
+          
+            token.id = i;
+            strcpy(token.lexeme, lexeme);
+            addToken(&lexerState->tokenList, token);
+            
+            lexerState->charInd++;
+            
+            return;
+        }
+    }
+    
+    lexerState->lexerError = INV_SYM;
+    
     return;
-}
-
-/// Takes the identifier currently being pointed to and returns it as a char*. Note that this method will advance the lexerState->charIndex.
-char* ConsumeIdentifier(LexerState* lexerState)
-{
-	// Current evaluation
-	char* characters = calloc(1, sizeof(char) * 1);
-	// Consume until we reach a non ' ' char
-	while (lexerState->sourceCode[lexerState->charInd] == ' ')
-	{
-		lexerState->charInd++;
-	}
-	// Before we filter out semicolons, check if it's the first item being checked.
-	if (lexerState->sourceCode[lexerState->charInd] == ';')
-	{
-		lexerState->charInd++;
-		return ";";
-	}
-	// While we see characters that are non ' ', '\n', '\0'
-	while (lexerState->sourceCode[lexerState->charInd] != ' ' &&
-		lexerState->sourceCode[lexerState->charInd] != '\0' &&
-		lexerState->sourceCode[lexerState->charInd] != '\n' &&
-		// If we see a semicolon, it's valid syntax even if it's attached to the identifier. We must skip it and catch it in the symbol method.
-		lexerState->sourceCode[lexerState->charInd] != ';')
-	{
-		int len = strlen(characters);
-		characters = realloc(characters, (len + 1) * sizeof(char));
-		characters[len] = lexerState->sourceCode[lexerState->charInd];
-		characters[len + 1] = '\0';
-
-		lexerState->charInd++;
-	}
-
-	return characters;
 }
 
 LexerOut lexicalAnalyzer(char* sourceCode)
@@ -391,7 +375,7 @@ LexerOut lexicalAnalyzer(char* sourceCode)
         char currentSymbol = lexerState.sourceCode[lexerState.charInd];
 
         // Skip spaces or new lines until an effective character is seen
-        while(currentSymbol == ' ' || currentSymbol == '\n')
+        while(currentSymbol == ' ' || currentSymbol == '\n' || currentSymbol == '\r')
         {
             // Advance line number if required
             if(currentSymbol == '\n')
