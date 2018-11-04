@@ -212,6 +212,8 @@ int block()
 int const_declaration()
 {
     printNonTerminal(CONST_DECLARATION);
+	Symbol currentSymbol;
+
 	if (getCurrentTokenType() == constsym)
 	{
 
@@ -223,6 +225,10 @@ int const_declaration()
 			//Error, Expected identifier
 			return 3;
 		}
+		currentSymbol.type = CONST;
+		strcpy(currentSymbol.name, getCurrentToken().lexeme);
+		currentSymbol.level = currentLevel;
+
 		printCurrentToken(); // Printing the token is essential!
 		nextToken(); // Go to the next token..
 
@@ -240,6 +246,8 @@ int const_declaration()
 			// error, = must be followed by a number
 			return 1;
 		}
+
+		currentSymbol.value = strtod(getCurrentToken().lexeme, NULL);
 
 		printCurrentToken(); // Printing the token is essential!
 		nextToken(); // Go to the next token..
@@ -287,6 +295,7 @@ int const_declaration()
 		printCurrentToken(); // Printing the token is essential!
 		nextToken(); // Go to the next token..
 	}
+	addSymbol(&symbolTable, currentSymbol);
     // Successful parsing.
     return 0;
 }
@@ -295,7 +304,7 @@ int const_declaration()
 int var_declaration()
 {
     printNonTerminal(VAR_DECLARATION);
-
+	Symbol currentSymbol;
 	if (getCurrentTokenType() == varsym)
 	{
 
@@ -303,11 +312,17 @@ int var_declaration()
 		printCurrentToken(); // Printing the token is essential!
 		nextToken(); // Go to the next token..
 
+		currentSymbol.type = VAR;
+		currentSymbol.level = currentLevel;
+
 		if (getCurrentTokenType() != identsym)
 		{
 			// Error, expected identifier after const
 			return 3;
 		}
+
+		strcpy(currentSymbol.name, getCurrentToken().lexeme);
+		addSymbol(&symbolTable, currentSymbol);
 
 		// GET TOKEN
 		printCurrentToken(); // Printing the token is essential!
@@ -324,6 +339,10 @@ int var_declaration()
 				// Expected identifier after comma
 				return 3;
 			}
+
+			strcpy(currentSymbol.name, getCurrentToken().lexeme);
+
+			addSymbol(&symbolTable, currentSymbol);
 
 			// GET TOKEN
 			printCurrentToken(); // Printing the token is essential!
@@ -346,6 +365,7 @@ int var_declaration()
 int proc_declaration()
 {
     printNonTerminal(PROC_DECLARATION);
+	Symbol currentSymbol;
 	while (getCurrentTokenType() == procsym)
 	{
 
@@ -353,11 +373,18 @@ int proc_declaration()
 		printCurrentToken(); // Printing the token is essential!
 		nextToken(); // Go to the next token..
 
+		currentSymbol.type = PROC;
+		currentSymbol.level = currentLevel;
+
 		if (getCurrentTokenType() != identsym)
 		{
 			// Error, expected identifier after const, sym etc
 			return 3;
 		}
+
+		strcpy(currentSymbol.name, getCurrentToken().lexeme);
+
+		addSymbol(&symbolTable, currentSymbol);
 
 		// GET TOKEN
 		printCurrentToken(); // Printing the token is essential!
