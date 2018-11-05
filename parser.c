@@ -277,27 +277,10 @@ int var_declaration()
     
     if (getCurrentTokenType() == varsym)
     {
-        // GET TOKEN
-        printCurrentToken(); // Printing the token is essential!
-        nextToken(); // Go to the next token..
-
         currentSymbol.type = VAR;
         currentSymbol.level = currentLevel;
 
-        if (getCurrentTokenType() != identsym)
-        {
-            // Error, expected identifier after const
-            return 3;
-        }
-
-        strcpy(currentSymbol.name, getCurrentToken().lexeme);
-        addSymbol(&symbolTable, currentSymbol);
-
-        // GET TOKEN
-        printCurrentToken(); // Printing the token is essential!
-        nextToken(); // Go to the next token..
-
-        while (getCurrentTokenType() == commasym)
+        do
         {
             // GET TOKEN
             printCurrentToken(); // Printing the token is essential!
@@ -305,7 +288,7 @@ int var_declaration()
 
             if (getCurrentTokenType() != identsym)
             {
-                // Expected identifier after comma
+                // Expected identifier
                 return 3;
             }
 
@@ -315,7 +298,7 @@ int var_declaration()
             // GET TOKEN
             printCurrentToken(); // Printing the token is essential!
             nextToken(); // Go to the next token..
-        }
+        } while (getCurrentTokenType() == commasym);
 
         if (getCurrentTokenType() != semicolonsym)
         {
