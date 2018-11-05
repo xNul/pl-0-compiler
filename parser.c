@@ -351,9 +351,13 @@ int proc_declaration()
         printCurrentToken(); // Printing the token is essential!
         nextToken(); // Go to the next token..
 
+        currentLevel++;
+        
         // run function and check error
         int err = block();
         if (err) return err;
+        
+        currentLevel--;
 
         if (getCurrentTokenType() != semicolonsym)
         {
