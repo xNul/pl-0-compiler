@@ -318,6 +318,7 @@ int proc_declaration()
 {
     printNonTerminal(PROC_DECLARATION);
     Symbol currentSymbol;
+    
     while (getCurrentTokenType() == procsym)
     {
         //Get Token
@@ -552,47 +553,9 @@ int relop()
 		Possible cases are =, !=, <, <=, >, >=
     */
     
-    if (getCurrentTokenType() == eqsym)
-    {
-        printCurrentToken(); // Print the token
-        nextToken(); // Go to next token
-
-        // Success
-        return 0;
-    }
-    else if (getCurrentTokenType() == neqsym)
-    {
-        printCurrentToken(); // Print the token
-        nextToken(); // Go to next token
-        
-        // Success
-        return 0;
-    }
-    else if (getCurrentTokenType() == lessym)
-    {
-        printCurrentToken(); // Print the token
-        nextToken(); // Go to next token
-
-        // Success
-        return 0;
-    }
-    else if (getCurrentTokenType() == leqsym)
-    {
-        printCurrentToken(); // Print the token
-        nextToken(); // Go to next token
-
-        // Success
-        return 0;
-    }
-    else if (getCurrentTokenType() == gtrsym)
-    {
-        printCurrentToken(); // Print the token
-        nextToken(); // Go to next token
-
-        // Success
-        return 0;
-    }
-    else if (getCurrentTokenType() == geqsym)
+    if (getCurrentTokenType() == eqsym || getCurrentTokenType() == neqsym ||
+        getCurrentTokenType() == lessym || getCurrentTokenType() == leqsym ||
+        getCurrentTokenType() == gtrsym || getCurrentTokenType() == geqsym)
     {
         printCurrentToken(); // Print the token
         nextToken(); // Go to next token
