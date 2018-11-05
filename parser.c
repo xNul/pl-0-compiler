@@ -214,6 +214,9 @@ int const_declaration()
 
     if (getCurrentTokenType() == constsym)
     {
+        currentSymbol.type = CONST;
+        currentSymbol.level = currentLevel;
+      
         do
         {
             printCurrentToken(); // Printing the token is essential!
@@ -225,9 +228,7 @@ int const_declaration()
                 return 3;
             }
             
-            currentSymbol.type = CONST;
             strcpy(currentSymbol.name, getCurrentToken().lexeme);
-            currentSymbol.level = currentLevel;
 
             printCurrentToken(); // Printing the token is essential!
             nextToken(); // Go to the next token..
