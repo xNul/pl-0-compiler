@@ -357,8 +357,8 @@ int proc_declaration()
 
         if (getCurrentTokenType() != semicolonsym)
         {
-            // Expected a semicolon or comma
-            return 4;
+            // Expected a semicolon
+            return 5;
         }
 
         // GET TOKEN
@@ -401,7 +401,7 @@ int statement()
         {
             // We expected identsym
             // Expected identifier
-            return 3;
+            return 8;
         }
         
         printCurrentToken(); // Printing the token is essential!
@@ -427,7 +427,7 @@ int statement()
         
         if (getCurrentTokenType() != endsym) 
         {
-            // Semicolon or } expected
+            // Semicolon or end expected
             return 10;
         }
 
