@@ -9,3 +9,4 @@
 *.user
 /VisualStudio/Assignment3/Debug
 *.txt
+/test/io/your_outputs
