@@ -252,7 +252,7 @@ int const_declaration()
 
             printCurrentToken(); // Printing the token is essential!
             nextToken(); // Go to the next token..
-        } while (getCurrentTokenType() == commasym)
+        } while (getCurrentTokenType() == commasym);
 
         if (getCurrentTokenType() != semicolonsym)
         {
