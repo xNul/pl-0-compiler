@@ -214,43 +214,7 @@ int const_declaration()
 
     if (getCurrentTokenType() == constsym)
     {
-        printCurrentToken(); // Printing the token is essential!
-        nextToken(); // Go to the next token..
-
-        if (getCurrentTokenType() != identsym)
-        {
-            //Error, Expected identifier
-            return 3;
-        }
-        
-        currentSymbol.type = CONST;
-        strcpy(currentSymbol.name, getCurrentToken().lexeme);
-        currentSymbol.level = currentLevel;
-
-        printCurrentToken(); // Printing the token is essential!
-        nextToken(); // Go to the next token..
-
-        if (getCurrentTokenType() != eqsym)
-        {
-            // error, identifier must be followed by =
-            return 2;
-        }
-
-        printCurrentToken(); // Printing the token is essential!
-        nextToken(); // Go to the next token..
-
-        if (getCurrentTokenType() != numbersym)
-        {
-            // error, = must be followed by a number
-            return 1;
-        }
-
-        currentSymbol.value = strtod(getCurrentToken().lexeme, NULL);
-
-        printCurrentToken(); // Printing the token is essential!
-        nextToken(); // Go to the next token..
-
-        while (getCurrentTokenType() == commasym)
+        do
         {
             printCurrentToken(); // Printing the token is essential!
             nextToken(); // Go to the next token..
@@ -260,6 +224,10 @@ int const_declaration()
                 // error expected identifier
                 return 3;
             }
+            
+            currentSymbol.type = CONST;
+            strcpy(currentSymbol.name, getCurrentToken().lexeme);
+            currentSymbol.level = currentLevel;
 
             printCurrentToken(); // Printing the token is essential!
             nextToken(); // Go to the next token..
@@ -278,10 +246,13 @@ int const_declaration()
                 // Error, = must be followed by a number
                 return 1;
             }
+            
+            currentSymbol.value = strtod(getCurrentToken().lexeme, NULL);
+            addSymbol(&symbolTable, currentSymbol);
 
             printCurrentToken(); // Printing the token is essential!
             nextToken(); // Go to the next token..
-        }
+        } while (getCurrentTokenType() == commasym)
 
         if (getCurrentTokenType() != semicolonsym)
         {
@@ -292,8 +263,6 @@ int const_declaration()
         printCurrentToken(); // Printing the token is essential!
         nextToken(); // Go to the next token..
     }
-    
-    addSymbol(&symbolTable, currentSymbol);
     
     // Successful parsing.
     return 0;
