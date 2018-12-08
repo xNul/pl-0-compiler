@@ -664,6 +664,9 @@ int factor()
     // Is the current token a identsym?
     if(getCurrentTokenType() == identsym)
     {
+        // emit(LOD, <reg dst>, <lexographical level>, <address>)
+        // might need LIT?
+      
         // Consume identsym
         nextToken(); // Go to the next token..
 
@@ -673,6 +676,8 @@ int factor()
     // Is that a numbersym?
     else if(getCurrentTokenType() == numbersym)
     {
+        // emit(LIT, <reg dst>, 0, getCurrentToken().lexeme)
+      
         // Consume numbersym
         nextToken(); // Go to the next token..
 
