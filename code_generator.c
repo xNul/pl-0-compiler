@@ -581,24 +581,42 @@ int condition()
 
 int expression()
 {
+    int addop, err = 0;
+    
     if (getCurrentTokenType() == plussym || getCurrentTokenType() == minussym)
     {
+        addop = getCurrentToken();
         nextToken(); // Go to next token
+        
+        // Get next term and check for error
+        err = term();
+        if (err) return err;
+        
+        if (addop == minussym)
+          // emit(NEG, <register dst>, <register src>, 0); // negate
     }
-    
-    // Get term error code
-    int err = term();
-
-    // If there was an error, return immediately
-    if (err) return err;
+    else
+    {
+        // Get term error code
+        err = term();
+        
+        // If there was an error, return immediately
+        if (err) return err;
+    }
 
     while (getCurrentTokenType() == plussym || getCurrentTokenType() == minussym)
     {
+        addop = getCurrentToken();
         nextToken(); // Go to next token
 
         // Get next term and check for error
         err = term();
         if (err) return err;
+        
+        if (addop == plussym)
+          // emit(ADD, <reg dst>, <reg src 1>, <reg src 2>) // addition
+        else
+          // emit(SUB, <reg dst>, <reg src 1>, <reg src 2>) // subtraction
     }
     
     return 0;
