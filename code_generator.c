@@ -632,13 +632,20 @@ int term()
       While current type is multsym or slashsym	
     */
     
+    int mulop;
     while (getCurrentTokenType() == multsym || getCurrentTokenType() == slashsym)
     {
+        mulop = getCurrentTokenType();
         nextToken(); // Go to next token
 
         // Get the code from factor. If error, return the error
         err = factor();
         if (err) return err;
+        
+        if (mulop == multsym)
+          // emit(MUL, <reg dst>, <reg src 1>, <reg src 2>)
+        else
+          // emit(DIV, <reg dst>, <reg src 1>, <reg src 2>)
     }
     
     // Success returns 0
