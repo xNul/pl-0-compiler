@@ -243,84 +243,454 @@ int program()
 
 int block()
 {
-    /**
-     * TODO
-     * */
+    int err = const_declaration();
+		if (err) return err;
+
+		err = var_declaration();
+		if (err) return err;
+
+		err = proc_declaration();
+		if (err) return err;
+
+    // Check statement() for errors after running
+    err = statement();
+    if (err) return err;
 
     return 0;
 }
 
 int const_declaration()
 {
-    /**
-     * TODO
-     * */
+    Symbol currentSymbol;
 
+    if (getCurrentTokenType() == constsym)
+    {
+        currentSymbol.type = CONST;
+        currentSymbol.level = currentLevel;
+      
+        do
+        {
+            nextToken(); // Go to the next token..
+
+            if (getCurrentTokenType() != identsym)
+            {
+                // error expected identifier
+                return 3;
+            }
+            
+            strcpy(currentSymbol.name, getCurrentToken().lexeme);
+
+            nextToken(); // Go to the next token..
+
+            if (getCurrentTokenType() != eqsym)
+            {
+                // identifier must be followed by an = sign
+                return 2;
+            }
+
+            nextToken(); // Go to the next token..
+
+            if (getCurrentTokenType() != numbersym)
+            {
+                // Error, = must be followed by a number
+                return 1;
+            }
+            
+            currentSymbol.value = strtod(getCurrentToken().lexeme, NULL);
+            addSymbol(&symbolTable, currentSymbol);
+
+            nextToken(); // Go to the next token..
+        } while (getCurrentTokenType() == commasym);
+
+        if (getCurrentTokenType() != semicolonsym)
+        {
+            // Error, semicolon or comma expected
+            return 4;
+        }
+
+        nextToken(); // Go to the next token..
+    }
+    
+    // Successful parsing.
     return 0;
 }
 
 int var_declaration()
 {
-    /**
-     * TODO
-     * */
+    Symbol currentSymbol;
+    
+    if (getCurrentTokenType() == varsym)
+    {
+        currentSymbol.type = VAR;
+        currentSymbol.level = currentLevel;
+
+        do
+        {
+            // GET TOKEN
+            nextToken(); // Go to the next token..
+
+            if (getCurrentTokenType() != identsym)
+            {
+                // Expected identifier
+                return 3;
+            }
+
+            strcpy(currentSymbol.name, getCurrentToken().lexeme);
+            addSymbol(&symbolTable, currentSymbol);
+
+            // GET TOKEN
+            nextToken(); // Go to the next token..
+        } while (getCurrentTokenType() == commasym);
+
+        if (getCurrentTokenType() != semicolonsym)
+        {
+            // Error, expected semicolon or comma after identifier
+            return 4;
+        }
+        
+        // GET TOKEN
+        nextToken(); // Go to the next token..
+    }
     
     return 0;
 }
 
 int proc_declaration()
 {
-    /**
-     * TODO
-     * */
+    Symbol currentSymbol;
+    
+    while (getCurrentTokenType() == procsym)
+    {
+        //Get Token
+        nextToken(); // Go to the next token..
+
+        currentSymbol.type = PROC;
+        currentSymbol.level = currentLevel;
+
+        if (getCurrentTokenType() != identsym)
+        {
+            // Error, expected identifier after const, sym etc
+            return 3;
+        }
+
+        strcpy(currentSymbol.name, getCurrentToken().lexeme);
+        addSymbol(&symbolTable, currentSymbol);
+
+        // GET TOKEN
+        nextToken(); // Go to the next token..
+
+        if (getCurrentTokenType() != semicolonsym)
+        {
+            // Expected semicolon after identifier
+            return 5;
+        }
+
+        // GET TOKEN
+        nextToken(); // Go to the next token..
+
+        currentLevel++;
+        
+        // run function and check error
+        int err = block();
+        if (err) return err;
+        
+        currentLevel--;
+
+        if (getCurrentTokenType() != semicolonsym)
+        {
+            // Expected a semicolon
+            return 5;
+        }
+
+        // GET TOKEN
+        nextToken(); // Go to the next token..
+    }
     
     return 0;
 }
 
 int statement()
 {
-    /**
-     * TODO
-     * */
+    if (getCurrentTokenType() == identsym)
+    {
+        nextToken(); // Go to the next token..
+        
+        if (getCurrentTokenType() != becomessym)
+        {
+            // We expected a becomessym
+            // Assignment operator expected
+            return 7;
+        }
+        
+        nextToken(); // Go to the next token..
+
+        // Check for error in expression
+        int err = expression();
+        if (err) return err;
+    }
+    else if (getCurrentTokenType() == callsym)
+    {
+        nextToken(); // Go to the next token..
+        
+        if (getCurrentTokenType() != identsym)
+        {
+            // We expected identsym
+            // Expected identifier
+            return 8;
+        }
+        
+        nextToken(); // Go to the next token..
+    }
+    else if (getCurrentTokenType() == beginsym)
+    {
+        nextToken(); // Go to the next token..
+
+        // Check for error in statement
+        int err = statement();
+        if (err) return err;
+
+        while (getCurrentTokenType() == semicolonsym)
+        {
+            nextToken(); // Go to the next token..
+
+            int err = statement();
+            if (err) return err;
+        }
+        
+        if (getCurrentTokenType() != endsym) 
+        {
+            // Semicolon or end expected
+            return 10;
+        }
+
+        nextToken(); // Go to the next token..
+    }
+    else if (getCurrentTokenType() == ifsym)
+    {
+        nextToken(); // Go to the next token..
+
+        int err = condition();
+        if (err) return err;
+
+        if (getCurrentTokenType() != thensym)
+        {
+            // then expected
+            return 9;
+        }
+
+        nextToken(); // Go to the next token..
+        
+        err = statement();
+        if (err) return err;
+
+        if (getCurrentTokenType() == elsesym)
+        {
+            nextToken(); // Go to the next token..
+
+            err = statement();
+            if (err) return err;
+        }
+    }
+    else if (getCurrentTokenType() == whilesym)
+    {
+        nextToken(); // Go to the next token..
+
+        int err = condition();
+        if (err) return err;
+
+        if (getCurrentTokenType() != dosym)
+        {
+            // Expected do
+            return 11;
+        }
+        
+        nextToken(); // Go to the next token..
+
+        err = statement();
+        if (err) return err;
+    }
+    else if (getCurrentTokenType() == writesym)
+    {
+        nextToken(); // Go to the next token..
+
+        if (getCurrentTokenType() != identsym)
+        {
+            // Expected an identifier after a write
+            return 3;
+        }
+
+        nextToken(); // Go to the next token..
+    }
+    else if (getCurrentTokenType() == readsym)
+    {
+        nextToken(); // Go to the next token..
+
+        if (getCurrentTokenType() != identsym)
+        {
+            // Expected an identifier after a read
+            return 3;
+        }
+
+        nextToken(); // Go to the next token..
+    }
     
     return 0;
 }
 
 int condition()
 {
-    /**
-     * TODO
-     * 
-     * Also, rel-op will be parsed and corresponding code will be generated here
-     * */
+    if (getCurrentTokenType() == oddsym)
+    {
+        nextToken(); // Go to next token
 
+        // Check error
+        int err = expression();
+        if (err) return err;
+    }
+    else
+    {
+        int err = expression();
+        if (err) return err;
+        
+        /*
+        Possible cases are =, !=, <, <=, >, >=
+        */
+    
+        if (getCurrentTokenType() == eqsym || getCurrentTokenType() == neqsym ||
+            getCurrentTokenType() == lessym || getCurrentTokenType() == leqsym ||
+            getCurrentTokenType() == gtrsym || getCurrentTokenType() == geqsym)
+        {
+            nextToken(); // Go to next token
+        }
+        else
+        {
+            /*
+              A relational operator was expected
+            */
+            
+            return 12;
+        }
+
+        // Parse expression again, returning error if immediate error
+        err = expression();
+        if (err) return err;
+    }
     
     return 0;
 }
 
 int expression()
 {
-    /**
-     * TODO
-     * */
+    if (getCurrentTokenType() == plussym || getCurrentTokenType() == minussym)
+    {
+        nextToken(); // Go to next token
+    }
+    
+    // Get term error code
+    int err = term();
+
+    // If there was an error, return immediately
+    if (err) return err;
+
+    while (getCurrentTokenType() == plussym || getCurrentTokenType() == minussym)
+    {
+        nextToken(); // Go to next token
+
+        // Get next term and check for error
+        err = term();
+        if (err) return err;
+    }
     
     return 0;
 }
 
 int term()
 {
-    /**
-     * TODO
-     * */
+    // Run the factor function
+    int err = factor();
+    if (err) return err;
     
+    /*
+      While current type is multsym or slashsym	
+    */
+    
+    while (getCurrentTokenType() == multsym || getCurrentTokenType() == slashsym)
+    {
+        nextToken(); // Go to next token
+
+        // Get the code from factor. If error, return the error
+        err = factor();
+        if (err) return err;
+    }
+    
+    // Success returns 0
     return 0;
 }
 
 int factor()
 {
     /**
-     * TODO
+     * There are three possibilities for factor:
+     * 1) ident
+     * 2) number
+     * 3) '(' expression ')'
      * */
+
+    // Is the current token a identsym?
+    if(getCurrentTokenType() == identsym)
+    {
+        // Consume identsym
+        nextToken(); // Go to the next token..
+
+        // Success
+        return 0;
+    }
+    // Is that a numbersym?
+    else if(getCurrentTokenType() == numbersym)
+    {
+        // Consume numbersym
+        nextToken(); // Go to the next token..
+
+        // Success
+        return 0;
+    }
+    // Is that a lparentsym?
+    else if(getCurrentTokenType() == lparentsym)
+    {
+        // Consume lparentsym
+        nextToken(); // Go to the next token..
+
+        // Continue by parsing expression.
+        int err = expression();
+
+        /**
+         * If parsing of expression was not successful, immediately stop parsing
+         * and propagate the same error code by returning it.
+         * */
+        
+        if(err) return err;
+
+        // After expression, right-parenthesis should come
+        if(getCurrentTokenType() != rparentsym)
+        {
+            /**
+             * Error code 13: Right parenthesis missing.
+             * Stop parsing and return error code 13.
+             * */
+            return 13;
+        }
+
+        // It was a rparentsym. Consume rparentsym.
+        nextToken(); // Go to the next token..
+    }
+    else
+    {
+        /**
+          * Error code 24: The preceding factor cannot begin with this symbol.
+          * Stop parsing and return error code 24.
+          * */
+        return 14;
+    }
     
     return 0;
 }
