@@ -585,7 +585,7 @@ int expression()
     
     if (getCurrentTokenType() == plussym || getCurrentTokenType() == minussym)
     {
-        addop = getCurrentToken();
+        addop = getCurrentTokenType();
         nextToken(); // Go to next token
         
         // Get next term and check for error
@@ -606,7 +606,7 @@ int expression()
 
     while (getCurrentTokenType() == plussym || getCurrentTokenType() == minussym)
     {
-        addop = getCurrentToken();
+        addop = getCurrentTokenType();
         nextToken(); // Go to next token
 
         // Get next term and check for error
