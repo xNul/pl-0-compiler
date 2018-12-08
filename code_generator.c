@@ -546,6 +546,8 @@ int condition()
         // Check error
         int err = expression();
         if (err) return err;
+        
+        // emit(ODD, <reg src and dst>, 0, 0)
     }
     else
     {
@@ -556,12 +558,19 @@ int condition()
         Possible cases are =, !=, <, <=, >, >=
         */
     
-        if (getCurrentTokenType() == eqsym || getCurrentTokenType() == neqsym ||
-            getCurrentTokenType() == lessym || getCurrentTokenType() == leqsym ||
-            getCurrentTokenType() == gtrsym || getCurrentTokenType() == geqsym)
-        {
-            nextToken(); // Go to next token
-        }
+        int eqop;
+        if (getCurrentTokenType() == eqsym)
+            eqop = EQL;
+        else if (getCurrentTokenType() == neqsym)
+            eqop = NEQ;
+        else if (getCurrentTokenType() == lessym)
+            eqop = LSS;
+        else if (getCurrentTokenType() == leqsym)
+            eqop = LEQ;
+        else if (getCurrentTokenType() == gtrsym)
+            eqop = GTR;
+        else if (getCurrentTokenType() == geqsym)
+            eqop = GEQ;
         else
         {
             /*
@@ -570,10 +579,14 @@ int condition()
             
             return 12;
         }
+        
+        nextToken(); // Go to next token
 
         // Parse expression again, returning error if immediate error
         err = expression();
         if (err) return err;
+        
+        // emit(eqop, <reg dst>, <reg src 1>, <reg src 2>)
     }
     
     return 0;
