@@ -1,1 +1,0 @@
-CODE GENERATOR ERROR[15]: Identifier is undeclared or out of scope.
