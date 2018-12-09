@@ -257,12 +257,15 @@ int block()
 		err = var_declaration();
 		if (err) return err;
 
+    int localVars = currentVars;
+    currentVars = 0;
+    
 		err = proc_declaration();
 		if (err) return err;
 
     vmCode[jumpAddress].m = nextCodeIndex;
-    emit(INC, 0, 0, 4+currentVars);
-    currentVars = 0;
+    emit(INC, 0, 0, 4+localVars);
+    fprintf(stderr, "%d\n", localVars);
 
     // Check statement() for errors after running
     err = statement();
@@ -351,12 +354,13 @@ int var_declaration()
             currentSymbol.type = VAR;
             currentSymbol.level = currentLevel;
             currentSymbol.scope = currentScope;
-            currentSymbol.value = -1;
+            currentSymbol.value = 0;
             currentSymbol.address = currentVars+4;
 
             strcpy(currentSymbol.name, getCurrentToken().lexeme);
             addSymbol(&symbolTable, currentSymbol);
             currentVars++;
+            fprintf(stderr, "TEST");
 
             // GET TOKEN
             nextToken(); // Go to the next token..
@@ -476,7 +480,9 @@ int statement()
 
         Symbol* tempSymbol = findSymbol(&symbolTable, currentScope, getCurrentToken().lexeme);
 
-        if (tempSymbol->type != PROC)
+        if (tempSymbol == NULL)
+            return 15;
+        else if (tempSymbol->type != PROC)
             return 17;
 
         emit(CAL, 0, currentLevel-tempSymbol->level, tempSymbol->address);
@@ -543,10 +549,12 @@ int statement()
     {
         nextToken(); // Go to the next token..
 
+        int jumpAddressP = nextCodeIndex;
+        
         int err = condition();
         if (err) return err;
 
-        int jumpAddress = nextCodeIndex;
+        int jumpAddressF = nextCodeIndex;
         emit(JPC, currentReg, 0, 0);
         currentReg--;
 
@@ -561,8 +569,8 @@ int statement()
         err = statement();
         if (err) return err;
 
-        emit(JMP, 0, 0, jumpAddress-1);
-        vmCode[jumpAddress].m = nextCodeIndex;
+        emit(JMP, 0, 0, jumpAddressP);
+        vmCode[jumpAddressF].m = nextCodeIndex;
     }
     else if (getCurrentTokenType() == writesym)
     {
@@ -576,11 +584,16 @@ int statement()
 
         Symbol* tempSymbol = findSymbol(&symbolTable, currentScope, getCurrentToken().lexeme);
 
-        if (tempSymbol->type == PROC)
+        if (tempSymbol == NULL)
+            return 15;
+        else if (tempSymbol->type == PROC)
             return 18;
 
         currentReg++;
-        emit(LOD, currentReg, currentLevel-tempSymbol->level, tempSymbol->address);
+        if (tempSymbol->type == CONST)
+          emit(LIT, currentReg, 0, tempSymbol->value);
+        else
+          emit(LOD, currentReg, currentLevel-tempSymbol->level, tempSymbol->address);
         emit(SIO_WRITE, currentReg, 0, 0);
         currentReg--;
 
@@ -598,7 +611,9 @@ int statement()
 
         Symbol* tempSymbol = findSymbol(&symbolTable, currentScope, getCurrentToken().lexeme);
 
-        if (tempSymbol->type == PROC || tempSymbol->type == CONST)
+        if (tempSymbol == NULL)
+            return 15;
+        else if (tempSymbol->type == PROC || tempSymbol->type == CONST)
             return 19;
 
         currentReg++;
@@ -756,7 +771,8 @@ int factor()
     if(getCurrentTokenType() == identsym)
     {
         Symbol* tempSymbol = findSymbol(&symbolTable, currentScope, getCurrentToken().lexeme);
-        if (tempSymbol == NULL || tempSymbol->value == -1)
+        
+        if (tempSymbol == NULL)
             return 15;
 
         currentReg++;
