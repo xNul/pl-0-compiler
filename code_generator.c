@@ -576,6 +576,9 @@ int statement()
 
         Symbol* tempSymbol = findSymbol(&symbolTable, currentScope, getCurrentToken().lexeme);
 
+        if (tempSymbol == NULL || tempSymbol->value == -1)
+            return 15;
+
         if (tempSymbol->type == PROC)
             return 18;
 
@@ -597,9 +600,6 @@ int statement()
         }
 
         Symbol* tempSymbol = findSymbol(&symbolTable, currentScope, getCurrentToken().lexeme);
-
-        if (tempSymbol == NULL || tempSymbol->value == -1)
-            return 15;
 
         if (tempSymbol->type == PROC || tempSymbol->type == CONST)
             return 19;
