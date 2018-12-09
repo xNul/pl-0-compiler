@@ -6,7 +6,7 @@
 
 /**
  * This pointer is set when by codeGenerator() func and used by printEmittedCode() func.
- * 
+ *
  * You are not required to use it anywhere. The implemented part of the skeleton
  * handles the printing. Instead, you are required to fill the vmCode properly by making
  * use of emit() func.
@@ -16,10 +16,13 @@ FILE* _out;
 /**
  * Token list iterator used by the code generator. It will be set once entered to
  * codeGenerator() and reset before exiting codeGenerator().
- * 
+ *
  * It is better to use the given helper functions to make use of token list iterator.
  * */
 TokenListIterator _token_list_it;
+
+// Counts vars for INC
+unsigned int currentVars;
 
 /**
  * Current level. Use this to keep track of the current level for the symbol table entries.
@@ -62,7 +65,7 @@ int emit(int OP, int R, int L, int M);
 
 /**
  * Prints the emitted code array (vmCode) to output file.
- * 
+ *
  * This func is called in the given codeGenerator() function. You are not required
  * to have another call to this function in your code.
  * */
@@ -87,7 +90,7 @@ void nextToken();
 
 /**
  * Functions used for non-terminals of the grammar
- * 
+ *
  * rel-op func is removed on purpose. For code generation, it is easier to parse
  * rel-op as a part of condition.
  * */
@@ -139,8 +142,8 @@ int emit(int OP, int R, int L, int M)
         fprintf(stderr, "MAX_CODE_LENGTH(%d) reached. Emit is unsuccessful: terminating code generator..\n", MAX_CODE_LENGTH);
         exit(0);
     }
-    
-    vmCode[nextCodeIndex] = (Instruction){ .op = OP, .r = R, .l = L, .m = M};    
+
+    vmCode[nextCodeIndex] = (Instruction){ .op = OP, .r = R, .l = L, .m = M};
 
     return nextCodeIndex++;
 }
@@ -160,9 +163,9 @@ void printEmittedCodes()
 
 /**
  * Advertised codeGenerator function. Given token list, which is possibly the
- * output of the lexer, parses a program out of tokens and generates code. 
+ * output of the lexer, parses a program out of tokens and generates code.
  * If encountered, returns the error code.
- * 
+ *
  * Returning 0 signals successful code generation.
  * Otherwise, returns a non-zero code generator error code.
  * */
@@ -176,6 +179,8 @@ int codeGenerator(TokenList tokenList, FILE* out)
      * token being parsed.
      * */
     _token_list_it = getTokenListIterator(&tokenList);
+
+    currentVars = 0;
 
     // Initialize current level to 0, which is the global level
     currentLevel = 0;
@@ -243,6 +248,9 @@ int program()
 
 int block()
 {
+    int jumpAddress = nextCodeIndex;
+    emit(JMP, 0, 0, 0);
+
     int err = const_declaration();
 		if (err) return err;
 
@@ -252,22 +260,23 @@ int block()
 		err = proc_declaration();
 		if (err) return err;
 
+    vmCode[jumpAddress].m = nextCodeIndex;
+    emit(INC, 0, 0, 4+currentVars);
+    currentVars = 0;
+
     // Check statement() for errors after running
     err = statement();
     if (err) return err;
+
+    emit(RTN, 0, 0, 0);
 
     return 0;
 }
 
 int const_declaration()
 {
-    Symbol currentSymbol;
-
     if (getCurrentTokenType() == constsym)
     {
-        currentSymbol.type = CONST;
-        currentSymbol.level = currentLevel;
-      
         do
         {
             nextToken(); // Go to the next token..
@@ -277,7 +286,14 @@ int const_declaration()
                 // error expected identifier
                 return 3;
             }
-            
+
+            Symbol currentSymbol;
+
+            currentSymbol.type = CONST;
+            currentSymbol.level = currentLevel;
+            currentSymbol.scope = currentScope;
+            currentSymbol.address = 0; // Not needed
+
             strcpy(currentSymbol.name, getCurrentToken().lexeme);
 
             nextToken(); // Go to the next token..
@@ -295,7 +311,7 @@ int const_declaration()
                 // Error, = must be followed by a number
                 return 1;
             }
-            
+
             currentSymbol.value = strtod(getCurrentToken().lexeme, NULL);
             addSymbol(&symbolTable, currentSymbol);
 
@@ -310,20 +326,15 @@ int const_declaration()
 
         nextToken(); // Go to the next token..
     }
-    
+
     // Successful parsing.
     return 0;
 }
 
 int var_declaration()
 {
-    Symbol currentSymbol;
-    
     if (getCurrentTokenType() == varsym)
     {
-        currentSymbol.type = VAR;
-        currentSymbol.level = currentLevel;
-
         do
         {
             // GET TOKEN
@@ -335,8 +346,17 @@ int var_declaration()
                 return 3;
             }
 
+            Symbol currentSymbol;
+
+            currentSymbol.type = VAR;
+            currentSymbol.level = currentLevel;
+            currentSymbol.scope = currentScope;
+            currentSymbol.value = -1;
+            currentSymbol.address = currentVars+4;
+
             strcpy(currentSymbol.name, getCurrentToken().lexeme);
             addSymbol(&symbolTable, currentSymbol);
+            currentVars++;
 
             // GET TOKEN
             nextToken(); // Go to the next token..
@@ -347,18 +367,18 @@ int var_declaration()
             // Error, expected semicolon or comma after identifier
             return 4;
         }
-        
+
         // GET TOKEN
         nextToken(); // Go to the next token..
     }
-    
+
     return 0;
 }
 
 int proc_declaration()
 {
     Symbol currentSymbol;
-    
+
     while (getCurrentTokenType() == procsym)
     {
         //Get Token
@@ -366,6 +386,8 @@ int proc_declaration()
 
         currentSymbol.type = PROC;
         currentSymbol.level = currentLevel;
+        currentSymbol.scope = currentScope;
+        currentSymbol.address = nextCodeIndex;; // Implemented in beginsym
 
         if (getCurrentTokenType() != identsym)
         {
@@ -389,11 +411,13 @@ int proc_declaration()
         nextToken(); // Go to the next token..
 
         currentLevel++;
-        
+        currentScope = &currentSymbol;
+
         // run function and check error
         int err = block();
         if (err) return err;
-        
+
+        currentScope = currentScope->scope; // Parent scope is assigned to the child procedure scope value
         currentLevel--;
 
         if (getCurrentTokenType() != semicolonsym)
@@ -405,7 +429,7 @@ int proc_declaration()
         // GET TOKEN
         nextToken(); // Go to the next token..
     }
-    
+
     return 0;
 }
 
@@ -413,32 +437,50 @@ int statement()
 {
     if (getCurrentTokenType() == identsym)
     {
+        Token symop = getCurrentToken();
         nextToken(); // Go to the next token..
-        
+
+        Symbol* tempSymbol = findSymbol(&symbolTable, currentScope, symop.lexeme);
+
+        if (tempSymbol == NULL)
+            return 15;
+        else if (tempSymbol->type == CONST || tempSymbol->type == PROC)
+            return 16;
+
         if (getCurrentTokenType() != becomessym)
         {
             // We expected a becomessym
             // Assignment operator expected
             return 7;
         }
-        
+
         nextToken(); // Go to the next token..
 
         // Check for error in expression
         int err = expression();
         if (err) return err;
+
+        emit(STO, currentReg, currentLevel-tempSymbol->level, tempSymbol->address);
+        currentReg--;
     }
     else if (getCurrentTokenType() == callsym)
     {
         nextToken(); // Go to the next token..
-        
+
         if (getCurrentTokenType() != identsym)
         {
             // We expected identsym
             // Expected identifier
             return 8;
         }
-        
+
+        Symbol* tempSymbol = findSymbol(&symbolTable, currentScope, getCurrentToken().lexeme);
+
+        if (tempSymbol->type != PROC)
+            return 17;
+
+        emit(CAL, 0, currentLevel-tempSymbol->level, tempSymbol->address);
+
         nextToken(); // Go to the next token..
     }
     else if (getCurrentTokenType() == beginsym)
@@ -456,8 +498,8 @@ int statement()
             int err = statement();
             if (err) return err;
         }
-        
-        if (getCurrentTokenType() != endsym) 
+
+        if (getCurrentTokenType() != endsym)
         {
             // Semicolon or end expected
             return 10;
@@ -472,6 +514,10 @@ int statement()
         int err = condition();
         if (err) return err;
 
+        int jumpAddress = nextCodeIndex;
+        emit(JPC, currentReg, 0, 0);
+        currentReg--;
+
         if (getCurrentTokenType() != thensym)
         {
             // then expected
@@ -479,9 +525,11 @@ int statement()
         }
 
         nextToken(); // Go to the next token..
-        
+
         err = statement();
         if (err) return err;
+
+        vmCode[jumpAddress].m = nextCodeIndex;
 
         if (getCurrentTokenType() == elsesym)
         {
@@ -498,16 +546,23 @@ int statement()
         int err = condition();
         if (err) return err;
 
+        int jumpAddress = nextCodeIndex;
+        emit(JPC, currentReg, 0, 0);
+        currentReg--;
+
         if (getCurrentTokenType() != dosym)
         {
             // Expected do
             return 11;
         }
-        
+
         nextToken(); // Go to the next token..
 
         err = statement();
         if (err) return err;
+
+        emit(JMP, 0, 0, jumpAddress-1);
+        vmCode[jumpAddress].m = nextCodeIndex;
     }
     else if (getCurrentTokenType() == writesym)
     {
@@ -518,6 +573,16 @@ int statement()
             // Expected an identifier after a write
             return 3;
         }
+
+        Symbol* tempSymbol = findSymbol(&symbolTable, currentScope, getCurrentToken().lexeme);
+
+        if (tempSymbol->type == PROC)
+            return 18;
+
+        currentReg++;
+        emit(LOD, currentReg, currentLevel-tempSymbol->level, tempSymbol->address);
+        emit(SIO_WRITE, currentReg, 0, 0);
+        currentReg--;
 
         nextToken(); // Go to the next token..
     }
@@ -531,9 +596,22 @@ int statement()
             return 3;
         }
 
+        Symbol* tempSymbol = findSymbol(&symbolTable, currentScope, getCurrentToken().lexeme);
+
+        if (tempSymbol == NULL || tempSymbol->value == -1)
+            return 15;
+
+        if (tempSymbol->type == PROC || tempSymbol->type == CONST)
+            return 19;
+
+        currentReg++;
+        emit(SIO_READ, currentReg, 0, 0);
+        emit(STO, currentReg, currentLevel-tempSymbol->level, tempSymbol->address);
+        currentReg--;
+
         nextToken(); // Go to the next token..
     }
-    
+
     return 0;
 }
 
@@ -546,60 +624,74 @@ int condition()
         // Check error
         int err = expression();
         if (err) return err;
+
+        emit(ODD, currentReg, 0, 0);
     }
     else
     {
         int err = expression();
         if (err) return err;
-        
+
         /*
         Possible cases are =, !=, <, <=, >, >=
         */
-    
-        if (getCurrentTokenType() == eqsym || getCurrentTokenType() == neqsym ||
-            getCurrentTokenType() == lessym || getCurrentTokenType() == leqsym ||
-            getCurrentTokenType() == gtrsym || getCurrentTokenType() == geqsym)
-        {
-            nextToken(); // Go to next token
-        }
+
+        int eqop;
+        if (getCurrentTokenType() == eqsym)
+            eqop = EQL;
+        else if (getCurrentTokenType() == neqsym)
+            eqop = NEQ;
+        else if (getCurrentTokenType() == lessym)
+            eqop = LSS;
+        else if (getCurrentTokenType() == leqsym)
+            eqop = LEQ;
+        else if (getCurrentTokenType() == gtrsym)
+            eqop = GTR;
+        else if (getCurrentTokenType() == geqsym)
+            eqop = GEQ;
         else
         {
             /*
               A relational operator was expected
             */
-            
+
             return 12;
         }
+
+        nextToken(); // Go to next token
 
         // Parse expression again, returning error if immediate error
         err = expression();
         if (err) return err;
+
+        emit(eqop, currentReg-1, currentReg-1, currentReg);
+        currentReg--;
     }
-    
+
     return 0;
 }
 
 int expression()
 {
     int addop, err = 0;
-    
+
     if (getCurrentTokenType() == plussym || getCurrentTokenType() == minussym)
     {
         addop = getCurrentTokenType();
         nextToken(); // Go to next token
-        
+
         // Get next term and check for error
         err = term();
         if (err) return err;
-        
+
         if (addop == minussym)
-          // emit(NEG, <register dst>, <register src>, 0); // negate
+          emit(NEG, currentReg, currentReg, 0);
     }
     else
     {
         // Get term error code
         err = term();
-        
+
         // If there was an error, return immediately
         if (err) return err;
     }
@@ -612,13 +704,14 @@ int expression()
         // Get next term and check for error
         err = term();
         if (err) return err;
-        
+
         if (addop == plussym)
-          // emit(ADD, <reg dst>, <reg src 1>, <reg src 2>) // addition
+            emit(ADD, currentReg-1, currentReg-1, currentReg);
         else
-          // emit(SUB, <reg dst>, <reg src 1>, <reg src 2>) // subtraction
+            emit(SUB, currentReg-1, currentReg-1, currentReg);
+        currentReg--;
     }
-    
+
     return 0;
 }
 
@@ -627,11 +720,11 @@ int term()
     // Run the factor function
     int err = factor();
     if (err) return err;
-    
+
     /*
-      While current type is multsym or slashsym	
+      While current type is multsym or slashsym
     */
-    
+
     int mulop;
     while (getCurrentTokenType() == multsym || getCurrentTokenType() == slashsym)
     {
@@ -641,13 +734,14 @@ int term()
         // Get the code from factor. If error, return the error
         err = factor();
         if (err) return err;
-        
+
         if (mulop == multsym)
-          // emit(MUL, <reg dst>, <reg src 1>, <reg src 2>)
+            emit(MUL, currentReg-1, currentReg-1, currentReg);
         else
-          // emit(DIV, <reg dst>, <reg src 1>, <reg src 2>)
+            emit(DIV, currentReg-1, currentReg-1, currentReg);
+        currentReg--;
     }
-    
+
     // Success returns 0
     return 0;
 }
@@ -664,6 +758,16 @@ int factor()
     // Is the current token a identsym?
     if(getCurrentTokenType() == identsym)
     {
+        Symbol* tempSymbol = findSymbol(&symbolTable, currentScope, getCurrentToken().lexeme);
+        if (tempSymbol == NULL || tempSymbol->value == -1)
+            return 15;
+
+        currentReg++;
+        if (tempSymbol->type == CONST)
+            emit(LIT, currentReg, 0, tempSymbol->value);
+        else
+            emit(LOD, currentReg, currentLevel-tempSymbol->level, tempSymbol->address);
+
         // Consume identsym
         nextToken(); // Go to the next token..
 
@@ -673,6 +777,9 @@ int factor()
     // Is that a numbersym?
     else if(getCurrentTokenType() == numbersym)
     {
+        currentReg++;
+        emit(LIT, currentReg, 0, atoi(getCurrentToken().lexeme));
+
         // Consume numbersym
         nextToken(); // Go to the next token..
 
@@ -692,7 +799,7 @@ int factor()
          * If parsing of expression was not successful, immediately stop parsing
          * and propagate the same error code by returning it.
          * */
-        
+
         if(err) return err;
 
         // After expression, right-parenthesis should come
@@ -716,6 +823,6 @@ int factor()
           * */
         return 14;
     }
-    
+
     return 0;
 }
