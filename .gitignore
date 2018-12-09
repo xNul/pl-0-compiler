@@ -1,0 +1,5 @@
+test/io/your_outputs/*
+vm/main.o
+vm/vm.out
+code_generator.out
+cg_out.txt
