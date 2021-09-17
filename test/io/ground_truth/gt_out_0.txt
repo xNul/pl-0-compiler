@@ -1,0 +1,64 @@
+Parsing History
+===============
+NONTERM: PROGRAM
+NONTERM: BLOCK
+NONTERM: CONST_DECLARATION
+TOKEN  : <constsym, 'const'>
+TOKEN  : <identsym, 'm'>
+TOKEN  : <eqsym, '='>
+TOKEN  : <numbersym, '7'>
+TOKEN  : <semicolonsym, ';'>
+NONTERM: VAR_DECLARATION
+TOKEN  : <varsym, 'var'>
+TOKEN  : <identsym, 'i'>
+TOKEN  : <semicolonsym, ';'>
+NONTERM: PROC_DECLARATION
+TOKEN  : <procsym, 'procedure'>
+TOKEN  : <identsym, 'myproc'>
+TOKEN  : <semicolonsym, ';'>
+NONTERM: BLOCK
+NONTERM: CONST_DECLARATION
+NONTERM: VAR_DECLARATION
+NONTERM: PROC_DECLARATION
+NONTERM: STATEMENT
+TOKEN  : <beginsym, 'begin'>
+NONTERM: STATEMENT
+TOKEN  : <endsym, 'end'>
+TOKEN  : <semicolonsym, ';'>
+NONTERM: STATEMENT
+TOKEN  : <beginsym, 'begin'>
+NONTERM: STATEMENT
+TOKEN  : <identsym, 'i'>
+TOKEN  : <becomessym, ':='>
+NONTERM: EXPRESSION
+NONTERM: TERM
+NONTERM: FACTOR
+TOKEN  : <identsym, 'm'>
+TOKEN  : <semicolonsym, ';'>
+NONTERM: STATEMENT
+TOKEN  : <callsym, 'call'>
+TOKEN  : <identsym, 'myproc'>
+TOKEN  : <endsym, 'end'>
+TOKEN  : <periodsym, '.'>
+
+
+Symbol Table
+============
+#0
+   Type: CONST
+   Name: m
+  Value: 7
+  Level: 0
+
+#1
+   Type: VAR
+   Name: i
+  Level: 0
+
+#2
+   Type: PROC
+   Name: myproc
+  Level: 0
+
+
+PARSING WAS SUCCESSFUL.

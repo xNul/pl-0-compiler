@@ -1,0 +1,10 @@
+io/inputs/inp_0.txt io/your_outputs/your_out_0.txt
+io/inputs/inp_1.txt io/your_outputs/your_out_1.txt
+io/inputs/inp_2.txt io/your_outputs/your_out_2.txt
+io/inputs/inp_3.txt io/your_outputs/your_out_3.txt
+io/inputs/inp_4.txt io/your_outputs/your_out_4.txt
+io/inputs/inp_5.txt io/your_outputs/your_out_5.txt
+io/inputs/inp_6.txt io/your_outputs/your_out_6.txt
+io/inputs/inp_7.txt io/your_outputs/your_out_7.txt
+io/inputs/inp_8.txt io/your_outputs/your_out_8.txt
+io/inputs/inp_9.txt io/your_outputs/your_out_9.txt

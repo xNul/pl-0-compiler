@@ -1,0 +1,25 @@
+Parsing History
+===============
+NONTERM: PROGRAM
+NONTERM: BLOCK
+NONTERM: CONST_DECLARATION
+TOKEN  : <constsym, 'const'>
+TOKEN  : <identsym, 'a'>
+TOKEN  : <eqsym, '='>
+TOKEN  : <numbersym, '0'>
+TOKEN  : <semicolonsym, ';'>
+NONTERM: VAR_DECLARATION
+TOKEN  : <varsym, 'var'>
+TOKEN  : <identsym, 'i'>
+TOKEN  : <semicolonsym, ';'>
+NONTERM: PROC_DECLARATION
+TOKEN  : <procsym, 'procedure'>
+TOKEN  : <identsym, 'myproc'>
+TOKEN  : <semicolonsym, ';'>
+NONTERM: BLOCK
+NONTERM: CONST_DECLARATION
+NONTERM: VAR_DECLARATION
+NONTERM: PROC_DECLARATION
+NONTERM: STATEMENT
+
+PARSING ERROR[5]: Semicolon missing.

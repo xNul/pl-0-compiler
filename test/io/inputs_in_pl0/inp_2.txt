@@ -1,0 +1,30 @@
+/* A more complex input */
+const m = 7;
+var  i;
+
+procedure myproc;
+  begin
+  end;
+
+/* main func */
+begin
+  i := m;
+  call myproc;
+
+  /* if-then statement */
+  if i <> m then
+    i := m;
+
+  /* if-then-else statement */
+  if i = m then
+    i := i - m
+  else
+    i := m;
+
+  /* ident := expression */
+  i := -m * (i + m);
+
+  /* while loop */
+  while m >= i do
+    i := i + 1;
+end.

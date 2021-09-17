@@ -1,0 +1,13 @@
+/* Error case 3:  'const', 'var', 'procedure', 'read', 'write' must be followed by identifier */
+const y = 1, z = 2;
+var  i, j, k;
+
+procedure proc1;
+  const 5; /* error! */
+  begin
+  end;
+
+/* main func */
+begin
+  call proc1
+end.
