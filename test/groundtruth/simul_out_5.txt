@@ -1,0 +1,18 @@
+***Code Memory***
+  #  OP   R   L   M 
+  0 lit   5   0   1 
+  1 sio   5   0   1 
+  2 jpc   5   0   5 
+  3 lit   5   0   0 
+  4 sio   5   0   1 
+  5 sio   0   0   3 
+
+***Execution***
+  #  OP   R   L   M  PC  BP  SP STK 
+  0 lit   5   0   1   1   1   0   0 
+  1 sio   5   0   1   2   1   0   0 
+  2 jpc   5   0   5   3   1   0   0 
+  3 lit   5   0   0   4   1   0   0 
+  4 sio   5   0   1   5   1   0   0 
+  5 sio   0   0   3   6   1   0   0 
+HLT
