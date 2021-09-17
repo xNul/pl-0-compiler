@@ -1,0 +1,4 @@
+const m = 7, n = 85;
+begin
+  x := m;
+end.

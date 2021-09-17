@@ -1,0 +1,13 @@
+/*
+I
+like
+documenting
+my
+code
+even
+when
+there
+is
+none
+*/
+.

@@ -1,0 +1,1 @@
+ERROR: LexErr[4] was encountered at line 4 while lexical analysis: Invalid symbol.

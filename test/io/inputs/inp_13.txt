@@ -1,0 +1,9 @@
+const m = 7, n = 85;  
+var  i,y;  
+
+begin
+{
+  x := m;
+  y := n;
+}
+end.
